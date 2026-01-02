@@ -4,6 +4,11 @@
   --accent: #d4af37;     /* Or */
   --text: #2c3e50;
   --bg: #fdfdfd;
+
+  /* Couleurs spécifiques aux vins */
+  --rouge-vin: #A82431;    /* Un rouge profond mais lumineux */
+  --blanc-vin: #F3E5AB;    /* Crème vanillé */
+  --rose-vin: #F497AD;     /* Rose pétale */
 }
 
 body {

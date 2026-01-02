@@ -1,3 +1,4 @@
+/* Style de base */
 .form-container {
   background: white;
   padding: 30px;
@@ -5,7 +6,13 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Ombre douce */
   border-left: 5px solid var(--primary);
   margin-bottom: 40px;
+  transition: all 0.3s ease, border-color 0.4s ease;
 }
+
+/* Thèmes dynamiques */
+.form-container.rouge { border-left-color: var(--rouge-vin); box-shadow: 0 4px 20px rgba(168, 36, 49, 0.1); }
+.form-container.blanc { border-left-color: var(--blanc-vin); box-shadow: 0 4px 20px rgba(243, 229, 171, 0.2); }
+.form-container.rose { border-left-color: var(--rose-vin); box-shadow: 0 4px 20px rgba(244, 151, 173, 0.2); }
 
 .form-grid {
   display: grid;
@@ -52,6 +59,12 @@ button:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
 select {
   width: 100%;
   padding: 12px;
@@ -73,21 +86,6 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(168, 36, 49, 0.1);
 }
 
-/* Style de base */
-.form-container {
-  transition: all 0.4s ease;
-  border-left: 8px solid #ccc;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-/* Thèmes dynamiques */
-.form-container.rouge { border-left-color: #A82431; box-shadow: 0 4px 20px rgba(168, 36, 49, 0.1); }
-.form-container.blanc { border-left-color: #F3E5AB; box-shadow: 0 4px 20px rgba(243, 229, 171, 0.2); }
-.form-container.rose { border-left-color: #F497AD; box-shadow: 0 4px 20px rgba(244, 151, 173, 0.2); }
-
 /* Sélecteur de couleur "Boutons" */
 .color-selector {
   display: flex;
@@ -108,9 +106,9 @@ select:focus {
 .radio-btn input { display: none; } /* On cache le rond par défaut */
 
 /* Effets de sélection */
-.radio-btn.rouge:has(input:checked) { background: #A82431; color: white; border-color: #A82431; }
-.radio-btn.blanc:has(input:checked) { background: #F3E5AB; color: #7d6608; border-color: #e6d58e; }
-.radio-btn.rose:has(input:checked) { background: #F497AD; color: #7d2d3d; border-color: #f497ad; }
+.radio-btn.rouge:has(input:checked) { background: var(--rouge-vin); color: white; border-color: var(--rouge-vin); }
+.radio-btn.blanc:has(input:checked) { background: var(--blanc-vin); color: #7d6608; border-color: #e6d58e; }
+.radio-btn.rose:has(input:checked) { background: var(--rose-vin); color: #7d2d3d; border-color: #f497ad; }
 
 /* Styling des groupes dans le select */
 optgroup {
@@ -129,12 +127,6 @@ optgroup {
 input.invalid {
   border-color: #d32f2f !important;
   background-color: #fff8f8;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  filter: grayscale(1);
 }
 
 /* L'animation de pulsation */
@@ -157,10 +149,4 @@ button:disabled {
 .highlight-active {
   animation: formPulse 0.8s ease-out;
   border-color: #D4AF37 !important; /* Bordure dorée temporaire */
-}
-
-/* On s'assure que la transition de base est fluide */
-.form-container {
-  transition: all 0.3s ease, border-color 0.4s ease;
-  /* ... reste de ton style ... */
 }
