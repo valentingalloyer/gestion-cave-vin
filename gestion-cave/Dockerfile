@@ -1,18 +1,12 @@
-FROM eclipse-temurin:21-jdk AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
-# Copier le wrapper et le pom d'abord (pour mettre en cache les dépendances)
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-# Donner les permissions d'exécution au wrapper
-RUN chmod +x mvnw
-# Télécharger les dépendances (cette étape sera mise en cache)
-RUN ./mvnw dependency:go-offline
-
-# Copier les sources et construire
+COPY pom.xml .
 COPY src ./src
-RUN ./mvnw clean package -DskipTests
 
+RUN mvn clean package -DskipTests
+
+# Étape d'exécution
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
