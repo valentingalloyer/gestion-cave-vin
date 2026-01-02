@@ -1,0 +1,17 @@
+# Java / Spring Boot
+**/target/
+**/*.class
+**/mvnw
+**/mvnw.cmd
+**/.mvn/
+
+# Angular / Node
+**/node_modules/
+**/dist/
+.angular/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.DS_Store
