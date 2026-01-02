@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://gestion-cave-vin.onrender.com'
+  apiUrl: 'https://gestion-cave-vin.onrender.com/api'
 };

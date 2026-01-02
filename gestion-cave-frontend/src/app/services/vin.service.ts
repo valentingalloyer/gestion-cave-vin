@@ -6,7 +6,7 @@ import {environment} from '../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class VinService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl + '/vins';
 
   constructor(private http: HttpClient) {}
 
