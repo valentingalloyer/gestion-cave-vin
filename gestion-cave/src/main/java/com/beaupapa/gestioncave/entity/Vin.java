@@ -15,6 +15,7 @@ public class Vin {
     private String domaine;
     private int millesime;
     private String couleur; // "Rouge", "Blanc", "Rosé"
+    private String appellation; // "Bordeaux", "Bourgogne", etc.
     private int quantite;
     private String emplacement;
 
