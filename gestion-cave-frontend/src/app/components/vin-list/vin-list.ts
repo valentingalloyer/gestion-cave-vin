@@ -1,38 +1,48 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
+import {Component, computed, EventEmitter, OnInit, Output, signal} from '@angular/core';
 import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
 import {CommonModule} from '@angular/common';
-import {GroupeVin} from '../../models/groupeVin.model';
+import {GroupeVin, REGIONS_GROUPEES} from '../../models/groupeVin.model';
 import {ToastService} from '../../services/toast';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-vin-list',
   standalone: true,
   templateUrl: './vin-list.html',
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   styleUrls: ['./vin-list.css']
 })
 export class VinListComponent implements OnInit {
   vins = signal<Vin[]>([]);
 
+  @Output() preparerNouveauMillesime = new EventEmitter<GroupeVin>();
+
   searchQuery = signal('');
+  selectedAppellation = signal('');
+  readonly REGIONS_GROUPEES = REGIONS_GROUPEES;
   openedGroups = signal<Set<string>>(new Set());
 
   /**
    * Grouper les vins par nom + domaine
-    */
+   */
   groupedVins = computed(() => {
     const query = this.searchQuery().toLowerCase();
+    const regionFilter = this.selectedAppellation();
     const map = new Map<string, GroupeVin>();
 
-    // 1. Filtrage (nom, domaine ou même couleur !)
-    const filtered = this.vins().filter(v =>
-      v.nom.toLowerCase().includes(query) ||
-      v.domaine.toLowerCase().includes(query) ||
-      v.couleur.toLowerCase().includes(query)
-    );
+    let filtered = this.vins().filter(v => {
+      // Condition 1 : Recherche textuelle
+      const matchesSearch = v.nom.toLowerCase().includes(query) || v.domaine.toLowerCase().includes(query);
+      // Condition 2 : Filtre par région
+      const matchesRegion = regionFilter === '' || v.appellation === regionFilter;
+
+      return matchesSearch && matchesRegion;
+    });
 
     // 2. Groupement
     filtered.forEach(v => {
@@ -65,16 +75,26 @@ export class VinListComponent implements OnInit {
   });
 
   filteredAndSortedVins = computed(() => {
+    // Filtrer les vins
     let result = this.vins().filter(vin =>
-      vin.nom.toLowerCase().includes(this.searchQuery().toLowerCase()) ||
-      vin.domaine.toLowerCase().includes(this.searchQuery().toLowerCase())
+      (vin.nom.toLowerCase().includes(this.searchQuery().toLowerCase()) ||
+      vin.domaine.toLowerCase().includes(this.searchQuery().toLowerCase())) &&
+      (this.selectedAppellation() === '' || vin.appellation === this.selectedAppellation())
     );
+
+    // Trier par nom
     result.sort((a, b) => {
       return a.nom.localeCompare(b.nom);
     });
 
     return result;
   });
+
+  nombreTotalBouteilles = computed(() => {
+    return this.filteredAndSortedVins().reduce((total, vin) => total + vin.quantite, 0);
+  });
+
+  nombreTotalReferences = computed(() => this.filteredAndSortedVins().length);
 
   constructor(private vinService: VinService,
               protected toastService: ToastService) {}
@@ -92,7 +112,6 @@ export class VinListComponent implements OnInit {
 
   chargerVins() {
     this.vinService.getVins().subscribe(data => {
-      console.log(data);
       this.vins.set(data)
     });
   }
@@ -118,7 +137,7 @@ export class VinListComponent implements OnInit {
   }
 
   supprimerVin(id: number, nom: string, annee: number) {
-    if (confirm(`Voulez-vous vraiment supprimer tous les "${nom}" de votre cave ?`)) {
+    if (confirm(`Voulez-vous vraiment supprimer tous les "${nom}" ${annee} de votre cave ?`)) {
       this.vinService.deleteVin(id).subscribe(() => {
         this.toastService.show(`🗑️ "${nom}" ${annee} a été retiré de la cave.`);
 
@@ -126,4 +145,15 @@ export class VinListComponent implements OnInit {
       });
     }
   }
+
+  onRegionChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedAppellation.set(value);
+  }
+
+  onAjouterMillesime(group: GroupeVin) {
+    this.preparerNouveauMillesime.emit(group);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
 }

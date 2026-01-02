@@ -1,8 +1,9 @@
-import { Component, output } from '@angular/core';
+import {Component, output, signal} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { VinService } from '../../services/vin.service';
 import { Vin } from '../../models/vin.model';
 import {ToastService} from '../../services/toast';
+import {REGIONS_GROUPEES} from '../../models/groupeVin.model';
 
 @Component({
   selector: 'app-vin-form',
@@ -12,14 +13,11 @@ import {ToastService} from '../../services/toast';
   styleUrl: './form-creation-vin.css'
 })
 export class VinFormComponent {
-  readonly REGIONS_GROUPEES = [
-    { label: 'Plutôt Rouges', regions: ['Bordeaux', 'Bourgogne', 'Vallée du Rhône', 'Sud-Ouest', 'Beaujolais', 'Auvergne'] },
-    { label: 'Plutôt Blancs / Effervescents', regions: ['Alsace', 'Champagne', 'Loire', 'Jura', 'Savoie', 'Lorraine', 'Bugey'] },
-    { label: 'Plutôt Rosés / Sud', regions: ['Provence', 'Corse', 'Languedoc-Roussillon'] }
-  ];
+  readonly REGIONS_GROUPEES = REGIONS_GROUPEES;
 
   vinForm: FormGroup;
   vinAjoute = output<Vin>();
+  isHighlighted = signal(false);
 
   get currentCouleur(): string {
     return this.vinForm.get('couleur')?.value?.toLowerCase().replace('é', 'e') || 'rouge';
@@ -61,5 +59,25 @@ export class VinFormComponent {
         });
       });
     }
+  }
+
+  // Dans vin-form.component.ts
+  remplirDepuisExistant(vin: any) {
+    this.vinForm.patchValue({
+      nom: vin.nom,
+      domaine: vin.domaine,
+      appellation: vin.appellation,
+      couleur: vin.couleur,
+      millesime: new Date().getFullYear(),
+      quantite: 1,
+      emplacement: ''
+    });
+
+    this.isHighlighted.set(true);
+    setTimeout(() => {
+      this.isHighlighted.set(false);
+    }, 3000);
+
+    document.getElementById('millesime')?.focus();
   }
 }

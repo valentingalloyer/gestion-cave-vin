@@ -15,18 +15,34 @@
         (input)="onSearch($event)"
       >
     </div>
+    <div class="filter-container">
+      <select (change)="onRegionChange($event)" class="region-select">
+        <option value="">Toutes les régions</option>
+
+        @for (groupe of REGIONS_GROUPEES; track groupe.label) {
+          <optgroup [label]="groupe.label">
+            @for (region of groupe.regions; track region) {
+              <option [value]="region">{{ region }}</option>
+            }
+          </optgroup>
+        }
+      </select>
+    </div>
   </div>
 
   <div class="stats-container">
     <div class="stat-item">
       <span class="stat-label">Ma collection : </span>
-      <span class="stat-value">
-      <strong>{{ vins().length }}</strong>
-        {{ vins().length < 2 ? 'bouteille' : 'bouteilles' }} dans la cave
-    </span>
+      <div class="stat-bubble">
+        <strong>{{ nombreTotalReferences() }}</strong><span class="label"> références</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-bubble">
+        <strong>{{ nombreTotalBouteilles() }}</strong> bouteilles dans la cave
+      </div>
     </div>
 
-    @if (searchQuery() !== '') {
+    @if (searchQuery() !== '' || selectedAppellation() !== '') {
       <div class="stat-divider"></div>
       <div class="stat-item filtered">
         <span class="stat-label">Résultat : </span>
@@ -36,15 +52,6 @@
       </span>
       </div>
     }
-  </div>
-
-  <div class="table-header">
-    <div class="sortable">
-      Vin / Domaine
-    </div>
-    <div class="sortable text-right">
-      Total Stock
-    </div>
   </div>
 
   <div class="cave-container">
@@ -70,6 +77,11 @@
                   <span class="vin-appellation">• {{ group.appellation }}</span>
                 }
               </div>
+              <button class="btn-quick-add"
+                      (click)="onAjouterMillesime(group); $event.stopPropagation()"
+                      title="Ajouter un autre millésime">
+                Ajouter un millésime
+              </button>
             </div>
           </div>
 

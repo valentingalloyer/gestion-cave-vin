@@ -1,3 +1,3 @@
-<app-vin-form (vinAjoute)="liste.chargerVins()"></app-vin-form>
+<app-vin-form #formulaire (vinAjoute)="liste.chargerVins()"></app-vin-form>
 <hr>
-<app-vin-list #liste></app-vin-list>
+<app-vin-list #liste (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"></app-vin-list>

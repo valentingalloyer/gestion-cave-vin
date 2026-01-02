@@ -410,3 +410,59 @@
   padding: 10px 20px 10px 50px;
   border-bottom: 1px solid #f5f5f5;
 }
+
+.controls-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  align-items: center;
+  flex-wrap: wrap; /* Pour que ça passe sur deux lignes si l'écran est petit */
+}
+
+.search-container {
+  flex: 2; /* Prend plus de place */
+  min-width: 250px;
+}
+
+.filter-container {
+  flex: 1; /* Le select est plus petit */
+  min-width: 180px;
+}
+
+.region-select {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 50px; /* On garde le même style arrondi que la recherche */
+  border: 1.5px solid #eee;
+  background-color: white;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.region-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(107, 13, 13, 0.1);
+}
+
+.btn-quick-add {
+  margin-left: 15px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  background-color: transparent;
+  border: 1px dashed var(--primary);
+  color: var(--primary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0.7;
+}
+
+.btn-quick-add:hover {
+  background-color: var(--primary);
+  color: white;
+  opacity: 1;
+  border-style: solid;
+}
