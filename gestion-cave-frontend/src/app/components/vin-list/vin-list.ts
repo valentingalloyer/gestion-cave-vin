@@ -18,6 +18,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
   styleUrls: ['./vin-list.css']
 })
 export class VinListComponent implements OnInit {
+  isLoading = signal(true);
+  isTakingLonger = signal(false);
   vins = signal<Vin[]>([]);
 
   @Output() preparerNouveauMillesime = new EventEmitter<GroupeVin>();
@@ -111,8 +113,24 @@ export class VinListComponent implements OnInit {
   }
 
   chargerVins() {
-    this.vinService.getVins().subscribe(data => {
-      this.vins.set(data)
+    this.isLoading.set(true);
+
+    // Si au bout de 3 secondes on n'a toujours rien, on active le message spécial
+    const timer = setTimeout(() => {
+      if (this.isLoading()) this.isTakingLonger.set(true);
+    }, 3000);
+
+    this.vinService.getVins().subscribe({
+      next: (data) => {
+        this.vins.set(data);
+        this.isLoading.set(false);
+        this.isTakingLonger.set(false);
+        clearTimeout(timer);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.isTakingLonger.set(false);
+      }
     });
   }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {catchError, Observable, retry} from 'rxjs';
 import { Vin } from '../models/vin.model';
 import {environment} from '../../environments/environment.prod';
 
@@ -11,7 +11,16 @@ export class VinService {
   constructor(private http: HttpClient) {}
 
   getVins(): Observable<Vin[]> {
-    return this.http.get<Vin[]>(this.apiUrl);
+    return this.http.get<Vin[]>(this.apiUrl).pipe(
+      retry({
+        count: 10,
+        delay: 3000
+      }),
+      catchError(err => {
+        console.error("Le serveur fait la grasse mat'...", err);
+        throw err;
+      })
+    );
   }
 
   addVin(vin: Vin): Observable<Vin> {
