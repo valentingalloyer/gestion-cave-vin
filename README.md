@@ -1,6 +1,8 @@
 # 🍷 Gestion de Cave à Vin
 
 Application Fullstack pour gérer une cave personnelle. Développée pour mon beau-père !
+https://gestion-cave-vin.vercel.app/
+Le serveur peut mettre jusqu'à 90 secondes à se réveiller
 
 ## 🚀 Technologies
 - **Backend :** Java 21, Spring Boot 3.5.9, Spring Data JPA
