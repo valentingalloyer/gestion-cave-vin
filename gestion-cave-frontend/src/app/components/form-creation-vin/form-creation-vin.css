@@ -1,0 +1,53 @@
+.form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Ombre douce */
+  border-left: 5px solid var(--primary);
+  margin-bottom: 40px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  color: var(--primary);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+input, select {
+  border: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: var(--accent);
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 50px; /* Bouton arrondi moderne */
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background: #4d0909;
+  transform: translateY(-2px);
+}

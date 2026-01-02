@@ -1,0 +1,28 @@
+:root {
+  --primary: #6b0d0d;    /* Bordeaux profond */
+  --secondary: #f4e4bc;  /* Crème/Papier vieilli */
+  --accent: #d4af37;     /* Or */
+  --text: #2c3e50;
+  --bg: #fdfdfd;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1, h3 {
+  color: var(--primary);
+  font-family: 'Georgia', serif;
+  border-bottom: 2px solid var(--secondary);
+  padding-bottom: 10px;
+}

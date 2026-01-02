@@ -1,0 +1,124 @@
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; /* Espacement entre les lignes */
+}
+
+th {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: #999;
+  padding: 10px 20px;
+}
+
+tr {
+  background: white;
+  transition: transform 0.2s;
+}
+
+tr:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+td {
+  padding: 20px;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+td:first-child { border-left: 1px solid #f0f0f0; border-radius: 12px 0 0 12px; }
+td:last-child { border-right: 1px solid #f0f0f0; border-radius: 0 12px 12px 0; }
+
+.qty-actions button {
+  border-radius: 50%; /* Boutons +/- ronds */
+  background: white;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.qty-actions button:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+}
+
+.icon-bottle {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon-action {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.qty-actions button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.container { padding: 20px; font-family: sans-serif; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
+th { background-color: #f8f9fa; }
+
+/* Pastilles de couleur */
+.badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8em; color: white; }
+.rouge { background-color: #8B0000; }
+.blanc { background-color: #F4E0A1; color: #333; }
+.rosé { background-color: #FFB6C1; color: #333; }
+
+.search-container {
+  position: relative;
+  margin-bottom: 25px;
+  max-width: 400px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 15px 12px 45px; /* Espace pour l'icône à gauche */
+  border: 1px solid #e0e0e0;
+  border-radius: 50px;
+  font-size: 1rem;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(107, 13, 13, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #999;
+  pointer-events: none;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 40px !important;
+  color: #888;
+  font-style: italic;
+}
