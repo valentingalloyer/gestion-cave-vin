@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vins")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = { "http://localhost:4200", "https://gestion-cave-vin.vercel.app/" })
 public class VinController {
 
     @Autowired

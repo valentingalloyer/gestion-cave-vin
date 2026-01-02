@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Vin } from '../models/vin.model';
+import {environment} from '../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class VinService {
-  private apiUrl = 'http://localhost:8080/api/vins';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
