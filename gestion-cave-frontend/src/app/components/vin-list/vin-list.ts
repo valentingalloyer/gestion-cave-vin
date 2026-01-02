@@ -3,6 +3,7 @@ import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
 import {CommonModule} from '@angular/common';
 import {GroupeVin} from '../../models/groupeVin.model';
+import {ToastService} from '../../services/toast';
 
 @Component({
   selector: 'app-vin-list',
@@ -63,43 +64,23 @@ export class VinListComponent implements OnInit {
     });
   });
 
-  sortKey = signal<keyof Vin>('nom'); // Par défaut on trie par nom
-  sortDirection = signal<'asc' | 'desc'>('asc');
-
   filteredAndSortedVins = computed(() => {
     let result = this.vins().filter(vin =>
       vin.nom.toLowerCase().includes(this.searchQuery().toLowerCase()) ||
       vin.domaine.toLowerCase().includes(this.searchQuery().toLowerCase())
     );
-
-    const key = this.sortKey();
-    const direction = this.sortDirection() === 'asc' ? 1 : -1;
-
-    return result.sort((a, b) => {
-      const valA = a[key];
-      const valB = b[key];
-
-      if (valA! < valB!) return -1 * direction;
-      if (valA! > valB!) return 1 * direction;
-      return 0;
+    result.sort((a, b) => {
+      return a.nom.localeCompare(b.nom);
     });
+
+    return result;
   });
 
-  constructor(private vinService: VinService) {}
+  constructor(private vinService: VinService,
+              protected toastService: ToastService) {}
 
   ngOnInit(): void {
     this.chargerVins();
-  }
-
-  setSort(key: keyof Vin) {
-    if (this.sortKey() === key) {
-      // Si on clique sur la même colonne, on inverse l'ordre
-      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
-    } else {
-      // Sinon on change de colonne et on remet en ascendant
-      this.sortKey.set(key);
-      this.sortDirection.set('asc');
-    }
   }
 
   toggleGroup(cle: string) {
@@ -134,5 +115,15 @@ export class VinListComponent implements OnInit {
         listeActuelle.map(v => v.id === vin.id ? vinModifie : v)
       );
     });
+  }
+
+  supprimerVin(id: number, nom: string, annee: number) {
+    if (confirm(`Voulez-vous vraiment supprimer tous les "${nom}" de votre cave ?`)) {
+      this.vinService.deleteVin(id).subscribe(() => {
+        this.toastService.show(`🗑️ "${nom}" ${annee} a été retiré de la cave.`);
+
+        this.chargerVins();
+      });
+    }
   }
 }

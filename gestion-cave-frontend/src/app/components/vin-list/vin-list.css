@@ -356,3 +356,57 @@
 
 .color-section-header.rose { color: #d04d6a; }
 .color-section-header.rose::before { background: #F497AD; }
+
+.toast-notification {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2c3e50;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 50px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  z-index: 1000;
+  font-weight: 500;
+  border: 1px solid #34495e;
+  /* Petite animation d'apparition */
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from { bottom: -50px; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
+}
+
+.actions-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: flex-end;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #bbb; /* Discret par défaut */
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.btn-delete:hover {
+  color: #e74c3c; /* Rouge au survol */
+  transform: scale(1.1);
+}
+
+/* On ajuste la grille du vintage-row pour accueillir les actions */
+.vintage-row {
+  display: grid;
+  grid-template-columns: 100px 100px 1fr 180px; /* On élargit la dernière colonne */
+  align-items: center;
+  padding: 10px 20px 10px 50px;
+  border-bottom: 1px solid #f5f5f5;
+}

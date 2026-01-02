@@ -118,3 +118,21 @@ optgroup {
   color: var(--primary);
   background: #f9f9f9;
 }
+
+.error-msg {
+  color: #d32f2f;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+input.invalid {
+  border-color: #d32f2f !important;
+  background-color: #fff8f8;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}

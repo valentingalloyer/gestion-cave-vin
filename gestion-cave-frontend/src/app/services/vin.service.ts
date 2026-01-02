@@ -20,4 +20,8 @@ export class VinService {
   updateVin(vin: Vin): Observable<Vin> {
     return this.http.put<Vin>(`${this.apiUrl}/${vin.id}`, vin);
   }
+
+  deleteVin(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

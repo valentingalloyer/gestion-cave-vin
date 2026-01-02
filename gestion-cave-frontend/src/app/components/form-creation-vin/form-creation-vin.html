@@ -44,7 +44,18 @@
 
       <div class="form-group">
         <label for="millesime">Année (Millésime)</label>
-        <input id="millesime" type="number" formControlName="millesime">
+        <input id="millesime" type="number" formControlName="millesime"
+               [class.invalid]="vinForm.get('millesime')?.invalid && vinForm.get('millesime')?.touched">
+        @if (vinForm.get('millesime')?.invalid && vinForm.get('millesime')?.touched) {
+          <div class="error-msg">
+            @if (vinForm.get('millesime')?.errors?.['max']) {
+              Le vin du futur n'existe pas encore !
+            }
+            @if (vinForm.get('millesime')?.errors?.['min']) {
+              1900 minimum !
+            }
+          </div>
+        }
       </div>
 
       <div class="form-group">
