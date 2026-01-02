@@ -1,124 +1,358 @@
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px; /* Espacement entre les lignes */
+/* Variables de couleurs */
+:root {
+  --rouge-vin: #A82431;    /* Un rouge profond mais lumineux */
+  --blanc-vin: #F3E5AB;    /* Crème vanillé */
+  --rose-vin: #F497AD;     /* Rose pétale */
 }
 
-th {
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  color: #999;
+.container { max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+
+/* En-tête façon tableau */
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 150px 120px;
   padding: 10px 20px;
+  color: #999;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-tr {
+.text-right { text-align: right; }
+
+/* Carte de groupe */
+.vin-group-card {
   background: white;
-  transition: transform 0.2s;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #eee;
+  transition: all 0.2s ease-in-out;
 }
 
-tr:hover {
-  transform: scale(1.01);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+/* Petit effet visuel : quand on survole, la barre s'élargit un peu */
+.vin-group-card:hover .color-bar {
+  width: 12px;
 }
 
-td {
-  padding: 20px;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+/* La barre verticale sur le côté de la carte */
+.vin-group-card.rouge .color-bar {
+  background: linear-gradient(to bottom, #A82431, #701019);
+}
+.vin-group-card.blanc .color-bar {
+  background: linear-gradient(to bottom, #F3E5AB, #D4AF37);
+}
+.vin-group-card.rose .color-bar {
+  background: linear-gradient(to bottom, #F497AD, #D04D6A);
 }
 
-td:first-child { border-left: 1px solid #f0f0f0; border-radius: 12px 0 0 12px; }
-td:last-child { border-right: 1px solid #f0f0f0; border-radius: 0 12px 12px 0; }
-
-.qty-actions button {
-  border-radius: 50%; /* Boutons +/- ronds */
-  background: white;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-}
-
-.qty-actions button:hover:not(:disabled) {
-  background: var(--primary);
-  color: white;
-}
-
-.icon-bottle {
-  width: 18px;
-  height: 18px;
-  margin-right: 6px;
-  vertical-align: text-bottom;
-  fill: currentColor;
-}
-
-.badge {
-  display: inline-flex;
+.group-header {
+  display: grid;
+  /* 1fr : prend toute la place restante | 140px : pour la couleur | 100px : pour le stock */
+  grid-template-columns: 1fr 140px 100px;
   align-items: center;
-}
-
-.icon-action {
-  width: 16px;
-  height: 16px;
-  vertical-align: middle;
-}
-
-.qty-actions button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  padding: 12px 20px;
   cursor: pointer;
 }
 
-.container { padding: 20px; font-family: sans-serif; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
-th { background-color: #f8f9fa; }
+/* On s'assure que chaque section gère bien son alignement interne */
+.info-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  overflow: hidden; /* Empêche le texte trop long de tout décaler */
+}
 
-/* Pastilles de couleur */
-.badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8em; color: white; }
-.rouge { background-color: #8B0000; }
-.blanc { background-color: #F4E0A1; color: #333; }
-.rosé { background-color: #FFB6C1; color: #333; }
+.color-section {
+  display: flex;
+  justify-content: flex-start; /* Aligne les badges à gauche de leur colonne */
+}
+
+.stock-section {
+  display: flex;
+  justify-content: flex-end; /* Aligne le stock à droite */
+}
+
+.expand-icon {
+  transition: transform 0.3s;
+  color: var(--primary);
+  font-size: 0.8rem;
+}
+.expand-icon.rotated { transform: rotate(90deg); }
+
+.titles { display: flex; flex-direction: column; }
+
+.vin-nom {
+  font-weight: 700; /* Plus gras */
+  font-size: 1.1rem;
+  color: #1a1a1a;   /* Presque noir pour un contraste maximal */
+}
+
+.vin-domaine { color: #888; font-size: 0.9rem; }
+
+.sub-titles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.vin-appellation {
+  color: #a38b7a; /* Un ton terreux/cuivré pour le terroir */
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* Badges */
+.badge {
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  text-align: center;
+  width: fit-content;
+}
+.badge.rouge {
+  background-color: var(--rouge-vin);
+  color: white;
+  box-shadow: 0 2px 4px rgba(168, 36, 49, 0.2);
+}
+.badge.blanc {
+  background-color: var(--blanc-vin);
+  color: #7D6608; /* Texte brun foncé pour le contraste */
+}
+.badge.rose {
+  background-color: var(--rose-vin);
+  color: #7D2D3D; /* Texte bordeaux foncé pour le contraste */
+}
+
+.badge-total {
+  background: var(--secondary);
+  color: var(--primary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+/* Style des badges de couleur (plus visibles) */
+.badge-couleur {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 80px; /* Force une largeur minimale pour l'uniformité */
+  text-align: center;
+}
+
+.badge-couleur.rouge { background: #A82431; color: white; }
+.badge-couleur.blanc { background: #F3E5AB; color: #7d6608; border: 1px solid #e6d58e; }
+.badge-couleur.rose { background: #F497AD; color: #7d2d3d; }
+
+/* La pastille de couleur dans l'en-tête */
+.color-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0; /* Empêche la pastille de s'écraser */
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.color-indicator.rouge { background-color: #8b0000; }
+.color-indicator.blanc { background-color: #f4e4bc; }
+.color-indicator.rosé { background-color: #ffb6c1; }
+
+/* Sous-lignes (Millésimes) */
+.vintages-list {
+  background: #fcfcfc;
+  border-top: 1px solid #eee;
+  /* Animation simple en CSS */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s;
+  opacity: 0;
+}
+
+/* Quand l'accordéon est ouvert (il faudra ajouter une classe via le TS) */
+.vintages-list.show {
+  max-height: 500px; /* Une valeur assez grande */
+  opacity: 1;
+  padding: 5px 0;
+}
+
+.vintage-row {
+  display: grid;
+  grid-template-columns: 100px 100px 1fr 120px;
+  align-items: center;
+  padding: 10px 20px 10px 50px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.year { font-weight: bold; color: var(--primary); }
+
+.location { color: #777; font-style: italic; font-size: 0.85rem; }
+
+/* Quantités */
+.qty-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.qty-actions button {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  background: white;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.qty-actions button:hover { background: var(--primary); color: white; }
+
+/* Search Section */
+.search-section {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
 
 .search-container {
   position: relative;
-  margin-bottom: 25px;
-  max-width: 400px;
-}
-
-.search-container input {
   width: 100%;
-  padding: 12px 15px 12px 45px; /* Espace pour l'icône à gauche */
-  border: 1px solid #e0e0e0;
-  border-radius: 50px;
-  font-size: 1rem;
-  background-color: white;
-  transition: all 0.3s ease;
+  max-width: 500px; /* Largeur optimale */
+  display: flex;
+  align-items: center;
 }
 
-.search-container input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(107, 13, 13, 0.1);
-}
-
+/* La loupe : on fixe sa taille et sa position */
 .search-icon {
   position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  left: 16px;
+  width: 18px;  /* Taille réduite pour plus d'élégance */
+  height: 18px;
   color: #999;
-  pointer-events: none;
+  pointer-events: none; /* L'icône ne bloque pas le clic */
+  transition: color 0.3s ease;
 }
 
-.empty-msg {
-  text-align: center;
-  padding: 40px !important;
-  color: #888;
-  font-style: italic;
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 48px; /* 48px à gauche pour laisser la place à la loupe */
+  font-size: 0.95rem;
+  border: 1.5px solid #eee;
+  border-radius: 50px; /* Bordure totalement arrondie (pilule) */
+  background-color: #fff;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* Ombre très légère */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Effet au survol */
+.search-input:hover {
+  border-color: #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Effet quand on clique dedans (Focus) */
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary); /* Ton rouge Bordeaux */
+  background-color: #fff;
+  box-shadow: 0 4px 20px rgba(107, 13, 13, 0.12);
+  width: 105%; /* Petit effet d'agrandissement très pro */
+  margin-left: -2.5%; /* Pour rester centré pendant l'agrandissement */
+}
+
+/* Changement de couleur de l'icône au focus */
+.search-container:focus-within .search-icon {
+  color: var(--primary);
+}
+
+/* Style du texte d'aide (placeholder) */
+.search-input::placeholder {
+  color: #bbb;
+  font-weight: 300;
+}
+
+/* Stats Container */
+.stats-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #fdfaf5; /* Un ton crème très léger */
+  border-radius: 8px;
+  border: 1px solid #f0e6d2;
+  font-size: 0.9rem;
+  color: #5d4037; /* Brun doux pour le texte */
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  color: #8d6e63;
+  font-weight: 400;
+}
+
+.stat-value {
+  color: var(--primary); /* Ton rouge Bordeaux */
+}
+
+.stat-value strong {
+  font-size: 1.1rem;
+}
+
+/* Le petit trait vertical de séparation */
+.stat-divider {
+  width: 1px;
+  height: 20px;
+  background-color: #d7ccc8;
+}
+
+.stat-item.filtered {
+  color: #2e7d32; /* Un vert discret pour indiquer le résultat du filtre */
+}
+
+.stat-item.filtered .stat-value {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+/* Color Section Header */
+.color-section-header {
+  margin: 30px 0 15px 0;
+  padding: 8px 0;
+  font-family: 'Georgia', serif;
+  font-size: 1.4rem;
+  font-weight: bold;
+  border-bottom: 2px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* On ajoute une petite barre colorée avant le titre pour le style */
+.color-section-header::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  border-radius: 2px;
+}
+
+.color-section-header.rouge { color: #A82431; }
+.color-section-header.rouge::before { background: #A82431; }
+
+.color-section-header.blanc { color: #b09e54; }
+.color-section-header.blanc::before { background: #F3E5AB; }
+
+.color-section-header.rose { color: #d04d6a; }
+.color-section-header.rose::before { background: #F497AD; }

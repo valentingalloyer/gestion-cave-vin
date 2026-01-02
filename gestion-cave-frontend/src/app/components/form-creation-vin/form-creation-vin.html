@@ -1,7 +1,22 @@
-<div class="form-container">
+<div class="form-container" [class]="currentCouleur">
   <h3>Ajouter une nouvelle bouteille</h3>
   <form [formGroup]="vinForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
+
+      <div class="form-group full-width">
+        <label>Couleur de la robe</label>
+        <div class="color-selector">
+          <label class="radio-btn rouge">
+            <input type="radio" formControlName="couleur" value="Rouge"> <span>Rouge</span>
+          </label>
+          <label class="radio-btn blanc">
+            <input type="radio" formControlName="couleur" value="Blanc"> <span>Blanc</span>
+          </label>
+          <label class="radio-btn rose">
+            <input type="radio" formControlName="couleur" value="Rosé"> <span>Rosé</span>
+          </label>
+        </div>
+      </div>
 
       <div class="form-group">
         <label for="nom">Nom du vin</label>
@@ -11,6 +26,20 @@
       <div class="form-group">
         <label for="domaine">Domaine</label>
         <input id="domaine" formControlName="domaine" placeholder="ex: Domaine de la Romanée-Conti">
+      </div>
+
+      <div class="form-group">
+        <label>Région / Appellation</label>
+        <select formControlName="appellation">
+          <option value="">-- Choisir une région --</option>
+          @for (groupe of REGIONS_GROUPEES; track groupe.label) {
+            <optgroup [label]="groupe.label">
+              @for (r of groupe.regions; track r) {
+                <option [value]="r">{{ r }}</option>
+              }
+            </optgroup>
+          }
+        </select>
       </div>
 
       <div class="form-group">
@@ -35,6 +64,21 @@
       <div class="form-group">
         <label for="emplacement">Emplacement dans la cave</label>
         <input id="emplacement" formControlName="emplacement" placeholder="ex: Casier A1">
+      </div>
+
+      <div class="form-group">
+        <label for="apogeeDebut">Apogée Début</label>
+        <input id="apogeeDebut" type="number" formControlName="apogeeDebut" placeholder="ex: 2025">
+      </div>
+
+      <div class="form-group">
+        <label for="apogeeFin">Apogée Fin</label>
+        <input id="apogeeFin" type="number" formControlName="apogeeFin" placeholder="ex: 2035">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="notePersonnelle">Note Personnelle</label>
+        <textarea id="notePersonnelle" formControlName="notePersonnelle" rows="3" placeholder="Vos impressions, accords mets, etc."></textarea>
       </div>
 
     </div>

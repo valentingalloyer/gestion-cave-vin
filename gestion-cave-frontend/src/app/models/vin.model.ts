@@ -4,6 +4,7 @@ export interface Vin {
   domaine: string;
   millesime: number;
   couleur: string;
+  appellation: string;
   quantite: number;
   emplacement: string;
   apogeeDebut: number;
