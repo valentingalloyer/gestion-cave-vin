@@ -175,14 +175,27 @@
 
 .bottle-item {
   display: grid;
-  /* Année | Apogée | Note | Commentaire | Actions */
-  grid-template-columns: 60px 120px 100px 1fr 180px;
+  /* 1:An | 2:Apogée | 3:Note | 4:Commentaire | 5:Loc | 6:Actions */
+  grid-template-columns: 55px 110px 100px 1fr 100px 165px;
   align-items: center;
+  gap: 12px;
   padding: 8px 15px;
-  gap: 15px;
   background: #fcfcfc;
   border-radius: 8px;
   margin-bottom: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  border-left: 5px solid transparent;
+}
+
+.col-comment {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .bottle-item:hover {
@@ -221,16 +234,6 @@
 .star { font-size: 1.1rem; }
 .star.filled { color: #f1c40f; }
 
-/* Style du commentaire */
-.col-comment {
-  font-size: 0.85rem;
-  color: #888;
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .col-year {
   font-weight: 700;
   color: #333;
@@ -245,13 +248,16 @@
   font-size: 0.8rem;
   color: #999;
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
-/* Contrôles de quantité et actions */
 .col-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   justify-content: flex-end;
 }
 
@@ -291,12 +297,14 @@
   border: none;
   color: #ccc;
   cursor: pointer;
-  transition: 0.2s;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
 }
 
 .btn-trash:hover {
   color: #e74c3c;
-  transform: scale(1.1);
 }
 
 .chevron {
