@@ -73,11 +73,11 @@
                                 {{ v.apogeeDebut }} - {{ v.apogeeFin }}
                               }
                             </div>
-<!--                            <div class="col-note">
+                            <div class="col-note">
                               @for (star of [1,2,3,4,5]; track star) {
-                                <span class="star" [class.filled]="v.note >= star">★</span>
+                                <span class="star" [class.filled]="v.note && v.note >= star">★</span>
                               }
-                            </div>-->
+                            </div>
                             <span class="col-comment" [title]="v.notePersonnelle">
                               {{ v.notePersonnelle }}
                             </span>

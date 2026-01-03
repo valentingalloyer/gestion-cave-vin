@@ -68,21 +68,43 @@
         <input id="emplacement" formControlName="emplacement" placeholder="ex: Casier A1">
       </div>
 
-      <div class="form-group">
-        <label for="apogeeDebut">Apogée Début</label>
-        <input id="apogeeDebut" type="number" formControlName="apogeeDebut" placeholder="ex: 2025">
-      </div>
+    </div>
 
-      <div class="form-group">
-        <label for="apogeeFin">Apogée Fin</label>
-        <input id="apogeeFin" type="number" formControlName="apogeeFin" placeholder="ex: 2035">
+    <div class="expert-section">
+      <h3><span class="icon">✍️</span> Avis du Sommelier</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Note de dégustation</label>
+          <div class="star-rating">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <span
+                class="star-input"
+                [class.active]="vinForm.get('note')?.value >= star"
+                (click)="setNote(star)">
+            ★
+          </span>
+            }
+            <span class="note-text">({{ vinForm.get('note')?.value }}/5)</span>
+          </div>
+        </div>
+
+        <div class="apogee-group">
+          <div class="form-group">
+            <label>À boire dès</label>
+            <input type="number" formControlName="apogeeDebut">
+          </div>
+          <div class="form-group">
+            <label>Jusqu'à</label>
+            <input type="number" formControlName="apogeeFin">
+          </div>
+        </div>
       </div>
 
       <div class="form-group full-width">
-        <label for="notePersonnelle">Note Personnelle</label>
-        <textarea id="notePersonnelle" formControlName="notePersonnelle" rows="3" placeholder="Vos impressions, accords mets, etc."></textarea>
+        <label>Commentaires / Accords mets & vins</label>
+        <textarea formControlName="notePersonnelle" rows="3"></textarea>
       </div>
-
     </div>
 
     <button type="submit" [disabled]="vinForm.invalid">Ajouter à la cave</button>

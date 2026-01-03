@@ -38,7 +38,8 @@ export class VinFormComponent {
       emplacement: [''],
       apogeeDebut: [null, [Validators.min(1900), Validators.max(2200)]],
       apogeeFin: [null, [Validators.min(1900), Validators.max(2200)]],
-      notePersonnelle: ['']
+      notePersonnelle: [''],
+      note: [0]
     });
   }
 
@@ -79,5 +80,9 @@ export class VinFormComponent {
     }, 3000);
 
     document.getElementById('millesime')?.focus();
+  }
+
+  setNote(valeur: number) {
+    this.vinForm.patchValue({ note: valeur });
   }
 }

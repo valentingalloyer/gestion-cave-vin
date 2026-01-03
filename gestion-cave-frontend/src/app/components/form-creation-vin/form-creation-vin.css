@@ -150,3 +150,68 @@ input.invalid {
   animation: formPulse 0.8s ease-out;
   border-color: #D4AF37 !important; /* Bordure dorée temporaire */
 }
+
+.expert-section {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px dashed #d7ccc8;
+}
+
+.expert-section h3 {
+  font-size: 1rem;
+  color: #5d4037;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Style des étoiles cliquables */
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.8rem; /* Grosses étoiles pour cliquer facilement au doigt */
+  cursor: pointer;
+}
+
+.star-input {
+  color: #ddd;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.star-input:hover {
+  transform: scale(1.2);
+}
+
+.star-input.active {
+  color: #f1c40f; /* Jaune or */
+  text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
+}
+
+.note-text {
+  font-size: 0.9rem;
+  color: #999;
+  margin-left: 10px;
+  font-weight: normal;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1.5px solid #eee;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.apogee-group {
+  display: flex;
+  gap: 10px;
+}
