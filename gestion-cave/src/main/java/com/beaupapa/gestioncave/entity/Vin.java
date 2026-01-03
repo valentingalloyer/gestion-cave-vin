@@ -18,6 +18,7 @@ public class Vin {
     private String appellation; // "Bordeaux", "Bourgogne", etc.
     private int quantite;
     private String emplacement;
+    private Integer note; // Note sur 5
 
     // Années conseillées pour la dégustation
     private int apogeeDebut;
