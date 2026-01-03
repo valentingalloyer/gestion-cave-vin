@@ -10,4 +10,5 @@ export interface Vin {
   apogeeDebut: number;
   apogeeFin: number;
   notePersonnelle?: string;
+  note?: number;
 }

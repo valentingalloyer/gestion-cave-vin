@@ -1,13 +1,12 @@
 @if (isLoading()) {
   <div class="loading-overlay">
     <div class="wine-loader"></div>
-
     @if (!isTakingLonger()) {
       <p>Chargement de la cave...</p>
     } @else {
       <div class="wake-up-msg">
         <p>🍷 <strong>Le serveur se réveille...</strong></p>
-        <p>Il va peut-être falloir attendre jusqu'à 1min30 pour sortir de veille après 15 min d'inactivité.</p>
+        <p>Réveil en cours (jusqu'à 1min30 après inactivité).</p>
         <progress></progress>
       </div>
     }
@@ -17,137 +16,104 @@
     <h1>La cave à Jack 🍷</h1>
 
     <div class="search-section">
-      <div class="search-container">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-             stroke-linecap="round" stroke-linejoin="round">
+      <div class="search-container full-width">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Rechercher un millésime, un nom..."
-          (input)="onSearch($event)"
-        >
-      </div>
-      <div class="filter-container">
-        <select (change)="onRegionChange($event)" class="region-select">
-          <option value="">Toutes les régions</option>
-
-          @for (groupe of REGIONS_GROUPEES; track groupe.label) {
-            <optgroup [label]="groupe.label">
-              @for (region of groupe.regions; track region) {
-                <option [value]="region">{{ region }}</option>
-              }
-            </optgroup>
-          }
-        </select>
+        <input type="text" class="search-input" placeholder="Rechercher un vin, un millésime..."
+               (input)="onSearch($event)">
       </div>
     </div>
 
-    <div class="stats-container">
-      <div class="stat-item">
-        <span class="stat-label">Ma collection : </span>
-        <div class="stat-bubble">
-          <strong>{{ nombreTotalReferences() }}</strong><span class="label"> références</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-bubble">
-          <strong>{{ nombreTotalBouteilles() }}</strong> bouteilles dans la cave
-        </div>
-      </div>
-
-      @if (searchQuery() !== '' || selectedAppellation() !== '') {
-        <div class="stat-divider"></div>
-        <div class="stat-item filtered">
-          <span class="stat-label">Résultat : </span>
-          <span class="stat-value">
-        <strong>{{ filteredAndSortedVins().length }}</strong>
-            {{ filteredAndSortedVins().length < 2 ? 'bouteille trouvée' : 'bouteilles trouvées' }}
-      </span>
-        </div>
-      }
+    <div class="stats-bar">
+      <span><strong>{{ nombreTotalReferences() }}</strong> références</span>
+      <div class="divider"></div>
+      <span><strong>{{ nombreTotalBouteilles() }}</strong> bouteilles</span>
     </div>
 
-    <div class="cave-container">
-      @for (group of groupedVins(); track group.cle; let i = $index) {
+    <div class="cave-grid">
+      @for (region of groupedVins() | keyvalue; track region.key) {
+        <section class="region-block">
+          <header class="region-header" (click)="toggleRegion(region.key)" style="cursor: pointer;">
+            <h2>
+              <span class="chevron" [class.rotated]="isRegionCollapsed(region.key)">▶</span>
+              📍 {{ region.key }}
+            </h2>
+            <span class="region-total">{{ getCountForRegion(region.value) }} bouteilles</span>
+          </header>
 
-        @if (i === 0 || group.couleur !== groupedVins()[i-1].couleur) {
-          <div class="color-section-header" [class]="group.couleur.toLowerCase().replace('é', 'e')">
-            {{ group.couleur }}
-          </div>
-        }
+          <!-- Body région -->
+          @if (!isRegionCollapsed(region.key)) {
+            <div class="region-body">
+              @for (nameGroup of region.value | keyvalue; track nameGroup.key) {
+                <div class="wine-family">
+                  <div class="wine-family-header">
+                    <h3>{{ nameGroup.key }}</h3>
+                  </div>
 
-        <div class="vin-group-card" [class]="group.couleur.toLowerCase().replace('é', 'e')">
-          <div class="color-bar"></div>
+                  @for (domainGroup of nameGroup.value | keyvalue; track domainGroup.key) {
+                    <div class="domain-group">
+                      <div class="domain-header">
+                        <h4 class="domain-title">🏰 {{ domainGroup.key }}</h4>
+                        <button
+                          class="btn-mini-add"
+                          (click)="onAjouterMillesime(domainGroup.value[0])"
+                          title="Ajouter une autre année pour ce domaine">
+                          <span class="plus-icon">+</span> Millésime
+                        </button>
+                      </div>
+                      <div class="bottle-list">
+                        @for (v of domainGroup.value; track v.id) {
+                          <div class="bottle-item" [class]="v.couleur.toLowerCase()">
+                            <span class="col-year">{{ v.millesime }}</span>
+                            <div class="col-apogee" [title]="'À boire entre ' + v.apogeeDebut + ' et ' + v.apogeeFin">
+                              @if (v.apogeeDebut && v.apogeeFin) {
+                                <span class="icon">⌛</span>
+                                {{ v.apogeeDebut }} - {{ v.apogeeFin }}
+                              }
+                            </div>
+<!--                            <div class="col-note">
+                              @for (star of [1,2,3,4,5]; track star) {
+                                <span class="star" [class.filled]="v.note >= star">★</span>
+                              }
+                            </div>-->
+                            <span class="col-comment" [title]="v.notePersonnelle">
+                              {{ v.notePersonnelle }}
+                            </span>
+                            <span class="col-loc">{{ v.emplacement }}</span>
 
-          <div class="group-header" (click)="toggleGroup(group.cle)">
-            <div class="info-section">
-              <span class="expand-icon" [class.rotated]="openedGroups().has(group.cle)">▶</span>
-              <div class="titles">
-                <span class="vin-nom">{{ group.nom }}</span>
-                <div class="sub-titles">
-                  <span class="vin-domaine">{{ group.domaine }}</span>
-                  @if (group.appellation) {
-                    <span class="vin-appellation">• {{ group.appellation }}</span>
+                            <div class="col-actions">
+                              <div class="qty-control">
+                                <button (click)="changerQuantite(v, -1)">-</button>
+                                <span class="qty">{{ v.quantite }}</span>
+                                <button (click)="changerQuantite(v, 1)">+</button>
+                              </div>
+                              <button class="btn-trash" (click)="supprimerVin(v.id!, v.nom, v.millesime)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2">
+                                  <path
+                                    d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
                   }
                 </div>
-                <button class="btn-quick-add"
-                        (click)="onAjouterMillesime(group); $event.stopPropagation()"
-                        title="Ajouter un autre millésime">
-                  Ajouter un millésime
-                </button>
-              </div>
-            </div>
-
-            <div class="color-section">
-            <span class="badge-couleur" [class]="group.couleur.toLowerCase().replace('é', 'e')">
-              {{ group.couleur }}
-            </span>
-            </div>
-
-            <div class="stock-section">
-              <span class="badge-total">{{ group.totalQuantite }}</span>
-            </div>
-          </div>
-
-          @if (openedGroups().has(group.cle)) {
-            <div class="vintages-list" [class.show]="openedGroups().has(group.cle)">
-              @for (v of group.vintages; track v.id) {
-                <div class="vintage-row">
-                  <span class="year">Année {{ v.millesime }}</span>
-
-                  <span class="location">📍 {{ v.emplacement }}</span>
-
-                  <div class="actions-container">
-                    <div class="qty-actions">
-                      <button (click)="changerQuantite(v, -1); $event.stopPropagation()">-</button>
-                      <span class="qty">{{ v.quantite }}</span>
-                      <button (click)="changerQuantite(v, 1); $event.stopPropagation()">+</button>
-                    </div>
-
-                    <button class="btn-delete" (click)="supprimerVin(v.id!, v.nom, v.millesime); $event.stopPropagation()"
-                            title="Supprimer définitivement">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
               }
             </div>
           }
-        </div>
-      } @empty {
-        <div class="empty-msg">Aucun vin ne correspond à votre recherche.</div>
+        </section>
       }
     </div>
+    @if (filteredAndSortedVins().length === 0 && !isLoading()) {
+      <div class="no-result">
+        <p>🕵️‍♂️ Aucune bouteille ne correspond à "<strong>{{ searchQuery() }}</strong>"</p>
+        <button (click)="resetSearch()" class="btn-link">Voir toute la cave</button>
+      </div>
+    }
   </div>
 }
-
-@if (toastService.message()) {
-  <div class="toast-notification">
-    {{ toastService.message() }}
-  </div>
-}
-
