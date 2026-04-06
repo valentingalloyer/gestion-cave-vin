@@ -20,6 +20,11 @@ public class VinController {
         return vinRepository.findAll();
     }
 
+    @GetMapping("/user/{userId}")
+    public List<Vin> getVinsByUserId(@PathVariable Long userId) {
+        return vinRepository.findByUserId(userId);
+    }
+
     @PostMapping
     public Vin addVin(@RequestBody Vin vin) {
         return vinRepository.save(vin);

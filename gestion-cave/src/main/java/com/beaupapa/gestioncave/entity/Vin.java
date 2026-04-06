@@ -1,5 +1,6 @@
 package com.beaupapa.gestioncave.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,4 +27,9 @@ public class Vin {
 
     @Column(length = 1000)
     private String notePersonnelle;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 }
