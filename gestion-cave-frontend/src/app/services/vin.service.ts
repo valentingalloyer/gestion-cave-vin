@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {catchError, Observable, retry} from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {catchError, Observable, retry, throwError, timer} from 'rxjs';
 import { Vin } from '../models/vin.model';
 import {environment} from '../../environments/environment.prod';
 
@@ -14,7 +14,8 @@ export class VinService {
     return this.http.get<Vin[]>(this.apiUrl).pipe(
       retry({
         count: 10,
-        delay: 3000
+        // Inutile d'insister si on n'est pas (ou plus) connecté
+        delay: (err: HttpErrorResponse) => err.status === 401 ? throwError(() => err) : timer(3000)
       }),
       catchError(err => {
         console.error("Le serveur fait la grasse mat'...", err);

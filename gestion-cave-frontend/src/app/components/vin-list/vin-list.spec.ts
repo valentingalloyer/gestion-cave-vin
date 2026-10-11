@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VinList } from './vin-list';
+import { VinListComponent } from './vin-list';
 
 describe('VinList', () => {
-  let component: VinList;
-  let fixture: ComponentFixture<VinList>;
+  let component: VinListComponent;
+  let fixture: ComponentFixture<VinListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VinList]
+      imports: [VinListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(VinList);
+    fixture = TestBed.createComponent(VinListComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

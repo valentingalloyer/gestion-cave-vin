@@ -1,29 +1,55 @@
-import {Injectable, signal} from '@angular/core';
-import {tap} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {computed, Injectable, signal} from '@angular/core';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {Observable, retry, tap, throwError, timer} from 'rxjs';
+import {environment} from '../../environments/environment.prod';
+
+export interface AuthResponse {
+  token: string;
+  username: string;
+}
+
+export interface Credentials {
+  username: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private apiUrl = environment.apiUrl + '/auth';
+
   private token = signal<string | null>(localStorage.getItem('token'));
+  username = signal<string | null>(localStorage.getItem('username'));
+  isLoggedIn = computed(() => this.token() !== null);
 
-  constructor(
-    private http: HttpClient
-  ) {
-  }
+  constructor(private http: HttpClient) {}
 
-  login(credentials: any) {
-    return this.http.post<any>('.../api/auth/login', credentials).pipe(
-      tap(res => {
-        localStorage.setItem('token', res.token);
-        this.token.set(res.token);
-      })
-    );
+  getToken(): string | null {
+    return this.token();
   }
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     this.token.set(null);
+    this.username.set(null);
+  }
+
+  login(credentials: Credentials): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(this.apiUrl + '/login', credentials).pipe(
+      // Le serveur peut dormir : on réessaie seulement si on ne l'a pas joint (pas sur un mauvais mot de passe)
+      retry({
+        count: 10,
+        delay: (err: HttpErrorResponse) =>
+          err.status === 0 || err.status >= 500 ? timer(3000) : throwError(() => err)
+      }),
+      tap(res => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('username', res.username);
+        this.token.set(res.token);
+        this.username.set(res.username);
+      })
+    );
   }
 }

@@ -1,3 +1,11 @@
-<app-vin-form #formulaire (vinAjoute)="liste.chargerVins()"></app-vin-form>
-<hr>
-<app-vin-list #liste (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"></app-vin-list>
+@if (authService.isLoggedIn()) {
+  <div class="user-bar">
+    <span>👤 {{ authService.username() }}</span>
+    <button type="button" (click)="authService.logout()">Se déconnecter</button>
+  </div>
+  <app-vin-form #formulaire (vinAjoute)="liste.chargerVins()"></app-vin-form>
+  <hr>
+  <app-vin-list #liste (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"></app-vin-list>
+} @else {
+  <app-login></app-login>
+}

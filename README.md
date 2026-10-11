@@ -12,8 +12,11 @@ Le serveur peut mettre jusqu'à 90 secondes à se réveiller
 ## 🛠️ Installation
 
 ### Backend
-1. Aller dans `gestion-cave-backend`
-2. Configurer le `application.properties` avec vos accès PostgreSQL
+1. Aller dans `gestion-cave`
+2. Définir les variables d'environnement :
+   - `DB_URL`, `DB_USER`, `DB_PASSWORD` : accès PostgreSQL
+   - `JWT_SECRET` : clé de signature des tokens (32 caractères minimum)
+   - `PROPRIETAIRE_USERNAME`, `PROPRIETAIRE_PASSWORD` : compte créé au démarrage s'il n'existe pas (pas d'inscription publique). Il récupère les vins sans propriétaire.
 3. Lancer avec `./mvnw spring-boot:run`
 
 ### Frontend

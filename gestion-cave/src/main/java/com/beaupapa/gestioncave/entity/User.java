@@ -1,7 +1,11 @@
 package com.beaupapa.gestioncave.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.List;
 
 @Entity
@@ -18,9 +22,14 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    // Hash BCrypt, jamais renvoyé au front
+    @JsonIgnore
     private String password;
 
     // Un utilisateur peut avoir plusieurs vins
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Vin> vins;
 }
