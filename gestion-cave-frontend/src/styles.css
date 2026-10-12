@@ -9,6 +9,11 @@
   --rouge-vin: #A82431;    /* Un rouge profond mais lumineux */
   --blanc-vin: #F3E5AB;    /* Crème vanillé */
   --rose-vin: #F497AD;     /* Rose pétale */
+
+  /* Liserés des bouteilles dans la liste */
+  --rouge: #8b0000;
+  --blanc: #f4e76e;
+  --rose: #ffc0cb;
 }
 
 body {
@@ -21,8 +26,8 @@ body {
 
 .container {
   max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 h1, h3 {

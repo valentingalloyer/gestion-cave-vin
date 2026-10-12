@@ -1,40 +1,15 @@
-:root {
-  --primary: #6b0d0d;
-  --bg-body: #f4f1ea;
-  --rouge: #8b0000;
-  --blanc: #f4e76e;
-  --rose: #ffc0cb;
-}
-
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
 /* Section Contrôles */
-.controls-row {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
 
 .search-container {
   position: relative;
-  flex: 2;
-  min-width: 280px;
+  max-width: 700px;
+  width: 100%;
 }
 
 .search-section {
   display: flex;
   justify-content: center;
   margin: 20px 0 40px 0; /* Plus d'espace sous la recherche */
-}
-
-.search-container.full-width {
-  max-width: 700px; /* On l'élargit un peu puisqu'elle est seule */
-  width: 100%;
 }
 
 .search-input {
@@ -60,16 +35,6 @@
   color: #999;
 }
 
-.region-select {
-  flex: 1;
-  min-width: 200px;
-  padding: 12px;
-  border-radius: 50px;
-  border: 1px solid #ddd;
-  color: #666;
-  cursor: pointer;
-}
-
 /* Stats Bar */
 .stats-bar {
   display: flex;
@@ -87,11 +52,6 @@
   width: 1px;
   height: 20px;
   background: #eee;
-}
-
-.filtered-tag {
-  color: #2e7d32;
-  font-weight: 600;
 }
 
 /* STRUCTURE CAVE */
@@ -156,16 +116,6 @@
   letter-spacing: 0.5px;
 }
 
-.btn-add-vintage {
-  font-size: 0.7rem;
-  padding: 3px 8px;
-  border: 1px dashed var(--primary);
-  background: transparent;
-  color: var(--primary);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 /* NIVEAU 3 : BOUTEILLES INDIVIDUELLES */
 .bottle-list {
   display: flex;
@@ -183,14 +133,11 @@
   background: #fcfcfc;
   border-radius: 8px;
   margin-bottom: 4px;
-  width: 100%;
-  box-sizing: border-box;
   border-left: 5px solid transparent;
 }
 
-.col-comment {
-  font-size: 0.85rem;
-  color: #888;
+/* Commentaire et emplacement : en italique, tronqués avec "…" */
+.col-comment, .col-loc {
   font-style: italic;
   white-space: nowrap;
   overflow: hidden;
@@ -198,20 +145,25 @@
   min-width: 0;
 }
 
+.col-comment {
+  font-size: 0.85rem;
+  color: #888;
+}
+
 .bottle-item:hover {
   background: #f5f5f5;
 }
 
 /* Couleurs sur le bord gauche */
-.bottle-item.rouge {
+.rouge {
   border-left-color: var(--rouge);
 }
 
-.bottle-item.blanc {
+.blanc {
   border-left-color: var(--blanc);
 }
 
-.bottle-item.rose {
+.rose {
   border-left-color: var(--rose);
 }
 
@@ -239,19 +191,9 @@
   color: #333;
 }
 
-.col-domain {
-  color: #666;
-  font-weight: 500;
-}
-
 .col-loc {
   font-size: 0.8rem;
   color: #999;
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
 }
 
 .col-actions {
