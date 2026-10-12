@@ -26,6 +26,11 @@ public class User {
     @JsonIgnore
     private String password;
 
+    // Hash du dernier mot de passe imposé par REINITIALISER_MOT_DE_PASSE :
+    // une même réinitialisation n'est appliquée qu'une fois (voir ReinitialisationMotDePasse)
+    @JsonIgnore
+    private String derniereReinitialisation;
+
     // Un utilisateur peut avoir plusieurs vins
     @OneToMany(mappedBy = "user")
     @JsonIgnore

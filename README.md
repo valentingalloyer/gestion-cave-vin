@@ -17,6 +17,7 @@ Le serveur peut mettre jusqu'à 90 secondes à se réveiller
    - `DB_URL`, `DB_USER`, `DB_PASSWORD` : accès PostgreSQL
    - `JWT_SECRET` : clé de signature des tokens (32 caractères minimum)
    - `PROPRIETAIRE_USERNAME`, `PROPRIETAIRE_PASSWORD` : compte créé au démarrage s'il n'existe pas (pas d'inscription publique). Il récupère les vins sans propriétaire.
+   - `REINITIALISER_UTILISATEUR`, `REINITIALISER_MOT_DE_PASSE` (facultatives) : mot de passe oublié. Impose ce mot de passe à ce compte au démarrage, une seule fois par valeur ; les variables peuvent ensuite être retirées.
 3. Lancer avec `./mvnw spring-boot:run`
 
 ### Frontend

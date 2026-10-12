@@ -7,6 +7,7 @@ import com.beaupapa.gestioncave.repository.DegustationRepository;
 import com.beaupapa.gestioncave.repository.UserRepository;
 import com.beaupapa.gestioncave.repository.VinRepository;
 import com.beaupapa.gestioncave.service.InitialisationProprietaire;
+import com.beaupapa.gestioncave.service.ReinitialisationMotDePasse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -299,6 +300,49 @@ class ApiTests {
             mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
                             .content(json.writeValueAsString(Map.of("username", "jack", "password", "secret"))))
                     .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @Nested
+    class MotDePasseOublie {
+
+        void reinitialiser(String username, String password) {
+            new ReinitialisationMotDePasse(userRepository, passwordEncoder, username, password).run(null);
+        }
+
+        @Test
+        void imposeLeNouveauMotDePasse() throws Exception {
+            reinitialiser("jack", "oubli");
+            assertThat(token("jack", "oubli")).isNotBlank();
+        }
+
+        @Test
+        void neSAppliqueQuUneFoisMemeSiLesVariablesRestent() throws Exception {
+            reinitialiser("jack", "oubli");
+            // Jack choisit ensuite son propre mot de passe...
+            mvc.perform(put("/api/compte/mot-de-passe")
+                            .header("Authorization", "Bearer " + token("jack", "oubli"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(json.writeValueAsString(Map.of("ancien", "oubli", "nouveau", "perso"))))
+                    .andExpect(status().isNoContent());
+
+            // ... et le redémarrage suivant de Render ne doit pas l'écraser
+            reinitialiser("jack", "oubli");
+            assertThat(token("jack", "perso")).isNotBlank();
+        }
+
+        @Test
+        void uneNouvelleValeurEstAppliqueeAUneNouvelleFois() throws Exception {
+            reinitialiser("jack", "oubli");
+            reinitialiser("jack", "oubli-2");
+            assertThat(token("jack", "oubli-2")).isNotBlank();
+        }
+
+        @Test
+        void ignoreUnCompteInconnuOuUnMotDePasseTropCourt() throws Exception {
+            reinitialiser("inconnu", "oubli");
+            reinitialiser("jack", "abc");
+            assertThat(token("jack", "secret")).isNotBlank();
         }
     }
 

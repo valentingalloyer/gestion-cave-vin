@@ -52,6 +52,13 @@ form {
   font-size: 0.9rem;
 }
 
+.oubli {
+  margin: 20px 0 0;
+  font-size: 0.85rem;
+  color: var(--texte-2);
+  text-align: center;
+}
+
 .wake-up-msg {
   text-align: center;
   font-size: 0.9rem;
