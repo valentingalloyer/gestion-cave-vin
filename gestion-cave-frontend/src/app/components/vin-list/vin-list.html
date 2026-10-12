@@ -1,20 +1,17 @@
 @if (isLoading()) {
-  <div class="loading-overlay">
-    <div class="wine-loader"></div>
+  <div class="chargement" role="status">
+    <div class="sablier" aria-hidden="true"></div>
     @if (!isTakingLonger()) {
-      <p>Chargement de la cave...</p>
+      <p>Chargement de la cave…</p>
     } @else {
-      <div class="wake-up-msg">
-        <p>🍷 <strong>Le serveur se réveille...</strong></p>
-        <p>Réveil en cours (jusqu'à 1min30 après inactivité).</p>
-        <progress></progress>
-      </div>
+      <p><strong>Le serveur se réveille…</strong></p>
+      <p class="secondaire">Ça peut prendre jusqu'à une minute et demie après une longue inactivité.</p>
     }
   </div>
 } @else {
   <div class="container">
-    <div class="liste-entete">
-      <h1>La cave à Jack 🍷</h1>
+    <div class="entete">
+      <h1 class="titre-serif">La cave à Jack</h1>
       <button type="button" class="btn-principal" [disabled]="!synchronise()" (click)="ajouterBouteille.emit()">+ Ajouter une bouteille</button>
     </div>
 
@@ -27,108 +24,75 @@
           }
           <button type="button" class="btn-secondaire" (click)="chargerVins()">Réessayer</button>
         } @else {
-          🍷 <strong>Le serveur se réveille…</strong>
+          <strong>Le serveur se réveille…</strong>
           Voici votre cave telle qu'au {{ dateCache() | date:"d/MM 'à' HH:mm" }}.
           Les modifications seront possibles dans un instant.
         }
       </p>
     }
 
-    <div class="search-section">
-      <div class="search-container">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" class="search-input" placeholder="Rechercher un vin, un millésime..."
-               (input)="onSearch($event)">
-      </div>
+    <div class="chiffres">
+      <div><span>Bouteilles</span><strong>{{ nombreTotalBouteilles() }}</strong></div>
+      <div><span>Références</span><strong>{{ nombreTotalReferences() }}</strong></div>
     </div>
 
-    <div class="stats-bar">
-      <span><strong>{{ nombreTotalReferences() }}</strong> références</span>
-      <div class="divider"></div>
-      <span><strong>{{ nombreTotalBouteilles() }}</strong> bouteilles</span>
+    <div class="recherche">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="search" placeholder="Margaux, 2015, Casier A1…" aria-label="Rechercher un vin"
+             [value]="searchQuery()" (input)="onSearch($event)">
     </div>
 
-    <div class="cave-grid">
-      @for (region of groupedVins() | keyvalue; track region.key) {
-        <section class="region-block">
-          <header class="region-header" (click)="toggleRegion(region.key)" style="cursor: pointer;">
-            <h2>
-              <span class="chevron" [class.rotated]="isRegionCollapsed(region.key)">▶</span>
-              📍 {{ region.key }}
-            </h2>
-            <span class="region-total">{{ getCountForRegion(region.value) }} bouteilles</span>
-          </header>
+    @for (region of regions(); track region.nom) {
+      <section class="region">
+        <button type="button" class="region-entete" [attr.aria-expanded]="!isRegionCollapsed(region.nom)"
+                (click)="toggleRegion(region.nom)">
+          <span class="chevron" [class.replie]="isRegionCollapsed(region.nom)" aria-hidden="true">›</span>
+          <span class="region-nom">{{ region.nom }}</span>
+          <span class="secondaire">{{ region.bouteilles }} bouteille{{ region.bouteilles > 1 ? 's' : '' }}</span>
+        </button>
 
-          <!-- Body région -->
-          @if (!isRegionCollapsed(region.key)) {
-            <div class="region-body">
-              @for (nameGroup of region.value | keyvalue; track nameGroup.key) {
-                <div class="wine-family">
-                  <div class="wine-family-header">
-                    <h3>{{ nameGroup.key }}</h3>
-                  </div>
-
-                  @for (domainGroup of nameGroup.value | keyvalue; track domainGroup.key) {
-                    <div class="domain-group">
-                      <div class="domain-header">
-                        <h4 class="domain-title">🏰 {{ domainGroup.key }}</h4>
-                        <button
-                          class="btn-mini-add"
-                          [disabled]="!synchronise()"
-                          (click)="preparerNouveauMillesime.emit(domainGroup.value[0])"
-                          title="Ajouter une autre année pour ce domaine">
-                          <span class="plus-icon">+</span> Millésime
-                        </button>
-                      </div>
-                      <div class="bottle-list">
-                        @for (v of domainGroup.value; track v.id) {
-                          <div class="bottle-item" [class]="v.couleur.toLowerCase().replace('é', 'e')"
-                               role="button" tabindex="0" [title]="'Modifier ' + v.nom + ' ' + v.millesime"
-                               (click)="synchronise() && modifierVin.emit(v)" (keydown.enter)="synchronise() && modifierVin.emit(v)">
-                            <span class="col-year">{{ v.millesime }}</span>
-                            <div class="col-apogee" [title]="'À boire entre ' + v.apogeeDebut + ' et ' + v.apogeeFin">
-                              @if (v.apogeeDebut && v.apogeeFin) {
-                                <span class="icon">⌛</span>
-                                {{ v.apogeeDebut }} - {{ v.apogeeFin }}
-                              }
-                            </div>
-                            <div class="col-note">
-                              @for (star of [1,2,3,4,5]; track star) {
-                                <span class="star" [class.filled]="v.note && v.note >= star">★</span>
-                              }
-                            </div>
-                            <span class="col-comment" [title]="v.notePersonnelle">
-                              {{ v.notePersonnelle }}
-                            </span>
-                            <span class="col-loc">{{ v.emplacement }}</span>
-
-                            <div class="col-actions">
-                              <!-- Les +/- ne doivent pas ouvrir le panneau de modification -->
-                              <div class="qty-control" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
-                                <button [disabled]="!synchronise()" (click)="changerQuantite(v, -1)">-</button>
-                                <span class="qty">{{ v.quantite }}</span>
-                                <button [disabled]="!synchronise()" (click)="changerQuantite(v, 1)">+</button>
-                              </div>
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
-              }
+        @if (!isRegionCollapsed(region.nom)) {
+          @for (v of region.vins; track v.id) {
+            <div class="ligne" [class.bue]="v.quantite === 0"
+                 role="button" tabindex="0" [title]="'Modifier ' + v.nom + ' ' + v.millesime"
+                 (click)="synchronise() && modifierVin.emit(v)" (keydown.enter)="synchronise() && modifierVin.emit(v)">
+              <span class="pastille" [class]="classeCouleur(v)" [title]="v.couleur"></span>
+              <span class="annee">{{ v.millesime }}</span>
+              <span class="vin">
+                <span class="nom">{{ v.nom }}</span>
+                <span class="details">{{ v.domaine }}@if (v.emplacement) { · {{ v.emplacement }}}</span>
+              </span>
+              <span class="apogee">
+                @if (v.apogeeDebut && v.apogeeFin) {
+                  {{ v.apogeeDebut }}–{{ v.apogeeFin }}
+                }
+              </span>
+              <span class="note" [attr.aria-label]="(v.note ?? 0) + ' sur 5'">
+                @for (star of [1,2,3,4,5]; track star) {
+                  <span [class.pleine]="v.note && v.note >= star">★</span>
+                }
+              </span>
+              <!-- Les +/- ne doivent pas ouvrir le panneau de modification -->
+              <span class="quantite" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+                <button type="button" aria-label="Retirer une bouteille" [disabled]="!synchronise()" (click)="changerQuantite(v, -1)">−</button>
+                <span>{{ v.quantite }}</span>
+                <button type="button" aria-label="Ajouter une bouteille" [disabled]="!synchronise()" (click)="changerQuantite(v, 1)">+</button>
+              </span>
             </div>
           }
-        </section>
-      }
-    </div>
-    @if (filteredAndSortedVins().length === 0 && !isLoading()) {
-      <div class="no-result">
-        <p>🕵️‍♂️ Aucune bouteille ne correspond à "<strong>{{ searchQuery() }}</strong>"</p>
-        <button (click)="resetSearch()" class="btn-link">Voir toute la cave</button>
+        }
+      </section>
+    }
+
+    @if (filteredAndSortedVins().length === 0) {
+      <div class="aucun-resultat">
+        @if (searchQuery()) {
+          <p>Aucune bouteille ne correspond à « {{ searchQuery() }} ».</p>
+          <button type="button" class="btn-secondaire" (click)="resetSearch()">Voir toute la cave</button>
+        } @else {
+          <p>La cave est vide pour l'instant.</p>
+          <button type="button" class="btn-principal" [disabled]="!synchronise()" (click)="ajouterBouteille.emit()">Ajouter une première bouteille</button>
+        }
       </div>
     }
   </div>

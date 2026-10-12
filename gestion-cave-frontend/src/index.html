@@ -1,11 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>GestionCaveFrontend</title>
+  <title>La cave à Jack</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Thème choisi appliqué avant le démarrage d'Angular, sans flash de thème clair (voir ThemeService) -->
+  <script>
+    try {
+      var theme = localStorage.getItem('theme');
+      document.documentElement.dataset.theme = theme === 'clair' || theme === 'sombre' ? theme : 'auto';
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

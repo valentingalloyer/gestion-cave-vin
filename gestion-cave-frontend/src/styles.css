@@ -1,91 +1,180 @@
+/*
+ * Couleurs de l'application.
+ * Thème clair par défaut ; thème sombre si l'utilisateur le choisit
+ * (data-theme="sombre") ou en mode automatique quand l'appareil est en sombre.
+ * Le choix est appliqué sur <html> par ThemeService (et dès le chargement dans index.html).
+ */
 :root {
-  --primary: #6b0d0d;    /* Bordeaux profond */
-  --secondary: #f4e4bc;  /* Crème/Papier vieilli */
-  --accent: #d4af37;     /* Or */
-  --text: #2c3e50;
-  --bg: #fdfdfd;
+  color-scheme: light;
+  --fond: #f6f4f1;
+  --surface: #ffffff;
+  --surface-2: #f1eee9;
+  --texte: #1f1d1a;
+  --texte-2: #6b6660;
+  --texte-3: #9a948c;
+  --bordure: rgba(0, 0, 0, 0.09);
+  --bordure-forte: rgba(0, 0, 0, 0.18);
+  --accent: #7a1f2b;
+  --accent-survol: #5e1520;
+  --sur-accent: #ffffff;
+  --accent-doux: #f4e7e8;
+  --danger: #b42318;
+  --etoile: #e0a526;
+  --vin-rouge: #a32d2d;
+  --vin-blanc: #e3a52b;
+  --vin-rose: #d4537e;
+  --ombre: 0 12px 40px rgba(0, 0, 0, 0.14);
+  --voile: rgba(0, 0, 0, 0.35);
+  --rayon: 10px;
+}
 
-  /* Couleurs spécifiques aux vins */
-  --rouge-vin: #A82431;    /* Un rouge profond mais lumineux */
-  --blanc-vin: #F3E5AB;    /* Crème vanillé */
-  --rose-vin: #F497AD;     /* Rose pétale */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="clair"]) {
+    color-scheme: dark;
+    --fond: #161412;
+    --surface: #201d1b;
+    --surface-2: #2a2623;
+    --texte: #f1ece6;
+    --texte-2: #b3aca4;
+    --texte-3: #847d75;
+    --bordure: rgba(255, 255, 255, 0.09);
+    --bordure-forte: rgba(255, 255, 255, 0.2);
+    --accent: #d9737f;
+    --accent-survol: #e8909a;
+    --sur-accent: #1a0d0f;
+    --accent-doux: #3a2226;
+    --danger: #f07167;
+    --etoile: #f0b54a;
+    --vin-rouge: #e05a5a;
+    --vin-blanc: #f0b54a;
+    --vin-rose: #ee7fa5;
+    --ombre: 0 12px 40px rgba(0, 0, 0, 0.5);
+    --voile: rgba(0, 0, 0, 0.6);
+  }
+}
 
-  /* Liserés des bouteilles dans la liste */
-  --rouge: #8b0000;
-  --blanc: #f4e76e;
-  --rose: #ffc0cb;
+/* Même palette que ci-dessus, quand le thème sombre est choisi explicitement */
+:root[data-theme="sombre"] {
+  color-scheme: dark;
+  --fond: #161412;
+  --surface: #201d1b;
+  --surface-2: #2a2623;
+  --texte: #f1ece6;
+  --texte-2: #b3aca4;
+  --texte-3: #847d75;
+  --bordure: rgba(255, 255, 255, 0.09);
+  --bordure-forte: rgba(255, 255, 255, 0.2);
+  --accent: #d9737f;
+  --accent-survol: #e8909a;
+  --sur-accent: #1a0d0f;
+  --accent-doux: #3a2226;
+  --danger: #f07167;
+  --etoile: #f0b54a;
+  --vin-rouge: #e05a5a;
+  --vin-blanc: #f0b54a;
+  --vin-rose: #ee7fa5;
+  --ombre: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --voile: rgba(0, 0, 0, 0.6);
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
-  line-height: 1.6;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 8px 16px 40px;
 }
 
-h1, h3 {
-  color: var(--primary);
-  font-family: 'Georgia', serif;
-  border-bottom: 2px solid var(--secondary);
-  padding-bottom: 10px;
+h1, h2, h3 {
+  font-weight: 500;
+  margin: 0;
 }
 
+.titre-serif {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* Champs de formulaire */
+input, select, textarea {
+  font: inherit;
+  color: var(--texte);
+  background: var(--surface);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon);
+  padding: 10px 12px;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
 
 /* Boutons partagés par les composants */
 .btn-principal, .btn-secondaire {
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 14px 28px;
-  border-radius: 50px;
+  font: inherit;
+  font-weight: 500;
+  padding: 9px 18px;
+  border-radius: var(--rayon);
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .btn-principal {
-  background: var(--primary);
-  color: white;
-  border: none;
+  background: var(--accent);
+  color: var(--sur-accent);
+  border: 1px solid var(--accent);
 }
 
 .btn-principal:hover:not(:disabled) {
-  background: #4d0909;
-  transform: translateY(-2px);
-}
-
-.btn-principal:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  filter: grayscale(1);
+  background: var(--accent-survol);
+  border-color: var(--accent-survol);
 }
 
 .btn-secondaire {
   background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--primary);
+  color: var(--texte);
+  border: 1px solid var(--bordure-forte);
 }
 
-.btn-secondaire:hover {
-  background: var(--secondary);
-}
-
-/* Bandeau d'information (serveur en cours de réveil...) */
-.bandeau-info {
-  background: var(--secondary);
-  color: var(--primary);
-  border-radius: 12px;
-  padding: 12px 18px;
-  margin: 16px 0 0;
-  font-size: 0.95rem;
+.btn-secondaire:hover:not(:disabled) {
+  background: var(--surface-2);
 }
 
 button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+/* Bandeau d'information (serveur en cours de réveil...) */
+.bandeau-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  background: var(--accent-doux);
+  color: var(--texte);
+  border-radius: var(--rayon);
+  padding: 10px 14px;
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+}
+
+/* Pastille de couleur du vin */
+.pastille {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--texte-3);
+}
+
+.pastille.rouge { background: var(--vin-rouge); }
+.pastille.blanc { background: var(--vin-blanc); }
+.pastille.rose { background: var(--vin-rose); }

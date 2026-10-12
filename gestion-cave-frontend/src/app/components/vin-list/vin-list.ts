@@ -3,18 +3,18 @@ import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
 import { CaveCacheService } from '../../services/cave-cache';
 import {CommonModule} from '@angular/common';
-import { REGIONS_GROUPEES} from '../../models/groupeVin.model';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+
+export interface RegionDeVins {
+  nom: string;
+  vins: Vin[];
+  bouteilles: number;
+}
 
 @Component({
   selector: 'app-vin-list',
   standalone: true,
   templateUrl: './vin-list.html',
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule],
   styleUrls: ['./vin-list.css']
 })
 export class VinListComponent implements OnInit {
@@ -27,50 +27,11 @@ export class VinListComponent implements OnInit {
   // Le serveur n'a pas répondu malgré les nouvelles tentatives
   serveurInjoignable = signal(false);
 
-  @Output() preparerNouveauMillesime = new EventEmitter<Vin>();
   @Output() modifierVin = new EventEmitter<Vin>();
   @Output() ajouterBouteille = new EventEmitter<void>();
 
   searchQuery = signal('');
-  openedGroups = signal<Set<string>>(new Set());
-
-  /**
-   * Grouper les vins par nom + domaine
-   */
-  groupedVins = computed(() => {
-    const vins = this.filteredAndSortedVins();
-    const regionsMap = new Map<string, Map<string, Map<string, Vin[]>>>();
-    const masterNames = new Map<string, string>();
-
-    vins.forEach(vin => {
-      // 1. Création des clés de comparaison (insensibles aux fautes)
-      const rKey = this.normaliser(vin.appellation || 'Sans région');
-      const nKey = this.normaliser(vin.nom);
-      const dKey = this.normaliser(vin.domaine || 'Domaine non précisé');
-
-      // 2. Sauvegarde du "joli nom" (on prend celui du premier vin rencontré)
-      if (!masterNames.has(rKey)) masterNames.set(rKey, vin.appellation || 'Sans région');
-      if (!masterNames.has(nKey)) masterNames.set(nKey, vin.nom);
-      if (!masterNames.has(dKey)) masterNames.set(dKey, vin.domaine || 'Domaine non précisé');
-
-      const pRegion = masterNames.get(rKey)!;
-      const pNom = masterNames.get(nKey)!;
-      const pDomaine = masterNames.get(dKey)!;
-
-      // 3. Construction de la pyramide
-      if (!regionsMap.has(pRegion)) regionsMap.set(pRegion, new Map());
-      const namesInRegion = regionsMap.get(pRegion)!;
-
-      if (!namesInRegion.has(pNom)) namesInRegion.set(pNom, new Map());
-      const domainsInName = namesInRegion.get(pNom)!;
-
-      if (!domainsInName.has(pDomaine)) domainsInName.set(pDomaine, []);
-
-      domainsInName.get(pDomaine)!.push(vin);
-    });
-
-    return regionsMap;
-  });
+  collapsedRegions = signal<Set<string>>(new Set());
 
   filteredAndSortedVins = computed(() => {
     const query = this.normaliser(this.searchQuery());
@@ -79,19 +40,36 @@ export class VinListComponent implements OnInit {
     if (query) {
       items = items.filter(v => {
         // On crée une grande chaîne normalisée avec toutes les infos du vin
-        const content = this.normaliser(`
-        ${v.nom}
-        ${v.domaine}
-        ${v.appellation}
-        ${v.millesime}
-        ${v.emplacement}
-      `);
-
+        const content = this.normaliser(`${v.nom} ${v.domaine} ${v.appellation} ${v.millesime} ${v.emplacement}`);
         return content.includes(query);
       });
     }
 
-    return [...items].sort((a, b) => a.nom.localeCompare(b.nom));
+    // Tri insensible aux accents et à la ponctuation : "Chateau Margaux" se range avec "Château Margaux"
+    return [...items].sort((a, b) =>
+      this.normaliser(a.nom).localeCompare(this.normaliser(b.nom))
+      || this.normaliser(a.domaine).localeCompare(this.normaliser(b.domaine))
+      || a.millesime - b.millesime);
+  });
+
+  /**
+   * Vins regroupés par région, les régions par ordre alphabétique
+   */
+  regions = computed<RegionDeVins[]>(() => {
+    const parRegion = new Map<string, RegionDeVins>();
+
+    for (const vin of this.filteredAndSortedVins()) {
+      // Même région malgré des différences d'accents ou d'espaces : on garde le premier nom rencontré
+      const cle = this.normaliser(vin.appellation || 'Sans région');
+      if (!parRegion.has(cle)) {
+        parRegion.set(cle, {nom: vin.appellation || 'Sans région', vins: [], bouteilles: 0});
+      }
+      const region = parRegion.get(cle)!;
+      region.vins.push(vin);
+      region.bouteilles += vin.quantite;
+    }
+
+    return [...parRegion.values()].sort((a, b) => a.nom.localeCompare(b.nom));
   });
 
   nombreTotalBouteilles = computed(() => {
@@ -99,8 +77,6 @@ export class VinListComponent implements OnInit {
   });
 
   nombreTotalReferences = computed(() => this.filteredAndSortedVins().length);
-
-  collapsedRegions = signal<Set<string>>(new Set());
 
   constructor(private vinService: VinService,
               private caveCache: CaveCacheService) {
@@ -120,13 +96,6 @@ export class VinListComponent implements OnInit {
     }
 
     this.chargerVins();
-  }
-
-  toggleGroup(cle: string) {
-    const current = new Set(this.openedGroups());
-    if (current.has(cle)) current.delete(cle);
-    else current.add(cle);
-    this.openedGroups.set(current);
   }
 
   chargerVins() {
@@ -176,24 +145,6 @@ export class VinListComponent implements OnInit {
     });
   }
 
-  getCountForRegion(nameMap: Map<string, Map<string, Vin[]>>): number {
-    let total = 0;
-
-    // Pour chaque nom de vin
-    nameMap.forEach(domainMap => {
-
-      // Chaque domaine
-      domainMap.forEach(vins => {
-
-        vins.forEach(v => {
-          total += v.quantite;
-        });
-      });
-    });
-
-    return total;
-  }
-
   toggleRegion(regionName: string) {
     const currentCollapsed = new Set(this.collapsedRegions());
 
@@ -210,24 +161,21 @@ export class VinListComponent implements OnInit {
     return this.collapsedRegions().has(regionName);
   }
 
+  classeCouleur(vin: Vin): string {
+    return (vin.couleur ?? '').toLowerCase().replace('é', 'e');
+  }
+
+  resetSearch() {
+    this.searchQuery.set('');
+  }
+
   private normaliser(str: string): string {
     if (!str) return '';
     return str
       .toLowerCase()
       .normalize("NFD") // Sépare les accents des lettres
-      .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
+      .replace(/[̀-ͯ]/g, "") // Supprime les accents
       .replace(/[^a-z0-9]/g, "") // Supprime tout ce qui n'est pas lettre ou chiffre (espaces, tirets...)
       .trim();
-  }
-
-  getFirstVin(domainMap: Map<string, Vin[]>) {
-    const firstArray = domainMap?.values().next().value;
-    return firstArray ? firstArray[0] : {} as Vin;
-  }
-
-  resetSearch() {
-    this.searchQuery.set('');
-    const input = document.querySelector('.search-input') as HTMLInputElement;
-    if (input) input.value = '';
   }
 }

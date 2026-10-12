@@ -1,7 +1,7 @@
 <div class="login-page">
   <div class="login-card">
-    <h1>La cave à Jack 🍷</h1>
-    <h3>Connexion</h3>
+    <h1 class="titre-serif">La cave à Jack</h1>
+    <h2>Connexion</h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -15,18 +15,18 @@
       </div>
 
       @if (erreur()) {
-        <p class="erreur">{{ erreur() }}</p>
+        <p class="erreur" role="alert">{{ erreur() }}</p>
       }
 
       @if (isTakingLonger()) {
-        <div class="wake-up-msg">
-          <p>🍷 <strong>Le serveur se réveille...</strong></p>
-          <p>Réveil en cours (jusqu'à 1min30 après inactivité).</p>
+        <div class="wake-up-msg" role="status">
+          <p><strong>Le serveur se réveille…</strong></p>
+          <p>Ça peut prendre jusqu'à une minute et demie après une longue inactivité.</p>
           <progress></progress>
         </div>
       }
 
-      <button type="submit" [disabled]="loginForm.invalid || isLoading()">Se connecter</button>
+      <button type="submit" class="btn-principal" [disabled]="loginForm.invalid || isLoading()">Se connecter</button>
     </form>
   </div>
 </div>

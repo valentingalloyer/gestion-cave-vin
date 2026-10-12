@@ -1,36 +1,38 @@
 .login-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 0 16px 40px;
   box-sizing: border-box;
 }
 
 .login-card {
-  background: white;
+  background: var(--surface);
   width: 100%;
-  max-width: 400px;
-  padding: 30px;
+  max-width: 380px;
+  padding: 28px;
+  border: 1px solid var(--bordure);
   border-radius: 12px;
-  border-left: 5px solid var(--rouge-vin);
-  box-shadow: 0 4px 20px rgba(168, 36, 49, 0.1);
-  text-align: center;
+  box-sizing: border-box;
 }
 
 h1 {
-  margin-top: 0;
+  font-size: 1.6rem;
+  text-align: center;
 }
 
-h3 {
-  border-bottom: none;
+h2 {
+  font-size: 0.95rem;
+  color: var(--texte-2);
+  text-align: center;
+  margin: 4px 0 24px;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  text-align: left;
+  gap: 16px;
 }
 
 .form-group {
@@ -39,61 +41,20 @@ form {
 }
 
 .form-group label {
-  color: var(--primary);
-  font-size: 0.75rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-input {
-  border: 1px solid #e0e0e0;
-  background-color: #fafafa;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  background-color: white;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-button[type="submit"] {
-  background: var(--primary);
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 14px 28px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background: #4d0909;
-  transform: translateY(-2px);
-}
-
-button[type="submit"]:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  filter: grayscale(1);
+  font-size: 0.8rem;
+  color: var(--texte-2);
+  margin-bottom: 6px;
 }
 
 .erreur {
   margin: 0;
-  color: var(--rouge-vin);
-  font-weight: bold;
+  color: var(--danger);
+  font-size: 0.9rem;
 }
 
 .wake-up-msg {
   text-align: center;
+  font-size: 0.9rem;
 }
 
 .wake-up-msg p {
@@ -102,5 +63,5 @@ button[type="submit"]:disabled {
 
 .wake-up-msg progress {
   width: 100%;
-  accent-color: var(--primary);
+  accent-color: var(--accent);
 }

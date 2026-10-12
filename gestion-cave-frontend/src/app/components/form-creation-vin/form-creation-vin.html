@@ -1,42 +1,45 @@
 @if (ouvert()) {
 <div class="panneau-fond" (click)="fermer()"></div>
-<div class="form-container" [class]="currentCouleur" role="dialog" aria-modal="true" aria-labelledby="titre-panneau">
+<div class="panneau" role="dialog" aria-modal="true" aria-labelledby="titre-panneau">
   <div class="panneau-entete">
-    <h3 id="titre-panneau">{{ vinEnEdition() ? "Modifier la bouteille" : "Ajouter une bouteille" }}</h3>
+    <h2 id="titre-panneau" class="titre-serif">
+      <span class="pastille" [class]="currentCouleur"></span>
+      {{ vinEnEdition() ? "Modifier la bouteille" : "Ajouter une bouteille" }}
+    </h2>
     <button type="button" class="btn-fermer" aria-label="Fermer" (click)="fermer()">✕</button>
   </div>
   <form [formGroup]="vinForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
 
       <div class="form-group full-width">
-        <label>Couleur de la robe</label>
-        <div class="color-selector">
-          <label class="radio-btn rouge">
-            <input type="radio" formControlName="couleur" value="Rouge"> <span>Rouge</span>
+        <span class="libelle">Couleur</span>
+        <div class="couleurs">
+          <label>
+            <input type="radio" formControlName="couleur" value="Rouge"> <span class="pastille rouge"></span> Rouge
           </label>
-          <label class="radio-btn blanc">
-            <input type="radio" formControlName="couleur" value="Blanc"> <span>Blanc</span>
+          <label>
+            <input type="radio" formControlName="couleur" value="Blanc"> <span class="pastille blanc"></span> Blanc
           </label>
-          <label class="radio-btn rose">
-            <input type="radio" formControlName="couleur" value="Rosé"> <span>Rosé</span>
+          <label>
+            <input type="radio" formControlName="couleur" value="Rosé"> <span class="pastille rose"></span> Rosé
           </label>
         </div>
       </div>
 
       <div class="form-group">
         <label for="nom">Nom du vin</label>
-        <input id="nom" formControlName="nom" placeholder="ex: Château Margaux">
+        <input id="nom" formControlName="nom" placeholder="Château Margaux">
       </div>
 
       <div class="form-group">
         <label for="domaine">Domaine</label>
-        <input id="domaine" formControlName="domaine" placeholder="ex: Domaine de la Romanée-Conti">
+        <input id="domaine" formControlName="domaine" placeholder="Domaine de la Romanée-Conti">
       </div>
 
       <div class="form-group">
-        <label>Région / Appellation</label>
-        <select formControlName="appellation">
-          <option value="">-- Choisir une région --</option>
+        <label for="appellation">Région</label>
+        <select id="appellation" formControlName="appellation">
+          <option value="">Choisir une région</option>
           @for (groupe of REGIONS_GROUPEES; track groupe.label) {
             <optgroup [label]="groupe.label">
               @for (r of groupe.regions; track r) {
@@ -48,7 +51,7 @@
       </div>
 
       <div class="form-group">
-        <label for="millesime">Année (Millésime)</label>
+        <label for="millesime">Millésime</label>
         <input id="millesime" type="number" formControlName="millesime"
                [class.invalid]="vinForm.get('millesime')?.invalid && vinForm.get('millesime')?.touched">
         @if (vinForm.get('millesime')?.invalid && vinForm.get('millesime')?.touched) {
@@ -69,46 +72,42 @@
       </div>
 
       <div class="form-group">
-        <label for="emplacement">Emplacement dans la cave</label>
-        <input id="emplacement" formControlName="emplacement" placeholder="ex: Casier A1">
+        <label for="emplacement">Emplacement</label>
+        <input id="emplacement" formControlName="emplacement" placeholder="Casier A1">
       </div>
 
     </div>
 
     <div class="expert-section">
-      <h3><span class="icon">✍️</span> Avis du Sommelier</h3>
+      <h3>Dégustation</h3>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Note de dégustation</label>
-          <div class="star-rating">
+          <span class="libelle">Note</span>
+          <div class="etoiles">
             @for (star of [1, 2, 3, 4, 5]; track star) {
-              <span
-                class="star-input"
-                [class.active]="vinForm.get('note')?.value >= star"
-                (click)="setNote(star)">
-            ★
-          </span>
+              <button type="button" [class.active]="vinForm.get('note')?.value >= star"
+                      [attr.aria-label]="star + ' sur 5'" (click)="setNote(star)">★</button>
             }
-            <span class="note-text">({{ vinForm.get('note')?.value }}/5)</span>
+            <span class="secondaire">{{ vinForm.get('note')?.value }}/5</span>
           </div>
         </div>
 
         <div class="apogee-group">
           <div class="form-group">
-            <label>À boire dès</label>
-            <input type="number" formControlName="apogeeDebut">
+            <label for="apogeeDebut">À boire dès</label>
+            <input id="apogeeDebut" type="number" formControlName="apogeeDebut" placeholder="2025">
           </div>
           <div class="form-group">
-            <label>Jusqu'à</label>
-            <input type="number" formControlName="apogeeFin">
+            <label for="apogeeFin">Jusqu'à</label>
+            <input id="apogeeFin" type="number" formControlName="apogeeFin" placeholder="2035">
           </div>
         </div>
       </div>
 
       <div class="form-group full-width">
-        <label>Commentaires / Accords mets & vins</label>
-        <textarea formControlName="notePersonnelle" rows="3"></textarea>
+        <label for="notePersonnelle">Commentaires et accords</label>
+        <textarea id="notePersonnelle" formControlName="notePersonnelle" rows="3" placeholder="Parfait avec un gibier"></textarea>
       </div>
     </div>
 
