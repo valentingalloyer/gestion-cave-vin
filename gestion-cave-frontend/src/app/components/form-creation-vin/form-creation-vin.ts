@@ -1,4 +1,4 @@
-import {Component, computed, HostListener, input, output, Signal, signal} from '@angular/core';
+import {Component, computed, effect, HostListener, input, output, Signal, signal, untracked} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { VinService } from '../../services/vin.service';
@@ -12,6 +12,16 @@ interface ValeursSaisies {
   nom?: string;
   domaine?: string;
   millesime?: number | string;
+  apogeeDebut?: number | null;
+  apogeeFin?: number | null;
+}
+
+/** Apogée déduite d'un autre millésime du même vin */
+export interface ApogeeProposee {
+  debut: number | null;
+  fin: number | null;
+  // Millésime dont on s'est inspiré, et sa période
+  reference: Vin;
 }
 
 /** Un vin déjà présent dans la cave, proposé pendant la saisie du nom */
@@ -84,6 +94,41 @@ export class VinFormComponent {
       && vin.millesime === Number(v.millesime)) ?? null;
   });
 
+  // Pour un vin déjà connu : période du millésime le plus proche, décalée d'autant d'années
+  apogeeProposee = computed<ApogeeProposee | null>(() => {
+    const v = this.valeurs();
+    const millesime = Number(v?.millesime);
+    if (this.vinEnEdition() || !v?.nom || !v?.domaine || !millesime) return null;
+
+    const reference = this.vins()
+      .filter(vin => (vin.apogeeDebut || vin.apogeeFin)
+        && normaliser(vin.nom) === normaliser(v.nom)
+        && normaliser(vin.domaine) === normaliser(v.domaine))
+      .sort((a, b) => Math.abs(a.millesime - millesime) - Math.abs(b.millesime - millesime))[0];
+    if (!reference) return null;
+
+    const ecart = millesime - reference.millesime;
+    return {
+      debut: reference.apogeeDebut ? reference.apogeeDebut + ecart : null,
+      fin: reference.apogeeFin ? reference.apogeeFin + ecart : null,
+      reference
+    };
+  });
+
+  // Dernière apogée remplie automatiquement : tant que les champs la contiennent, on peut la remplacer
+  apogeeRemplie = signal<ApogeeProposee | null>(null);
+
+  mentionApogee = computed<string | null>(() => {
+    const proposee = this.apogeeRemplie();
+    if (!proposee) return null;
+
+    const {apogeeDebut: debut, apogeeFin: fin, millesime} = proposee.reference;
+    const periode = debut && fin ? `${debut}–${fin}` : debut ? `dès ${debut}` : `jusqu'en ${fin}`;
+    const ecart = Math.abs(Number(this.valeurs()?.millesime) - millesime);
+    const decalage = ecart ? `, décalée de ${ecart} an${ecart > 1 ? 's' : ''}` : '';
+    return `Apogée proposée d'après le ${millesime} (${periode})${decalage}. Vous pouvez la modifier.`;
+  });
+
   get currentCouleur(): string {
     return this.vinForm.get('couleur')?.value?.toLowerCase().replace('é', 'e') || 'rouge';
   }
@@ -108,6 +153,12 @@ export class VinFormComponent {
     });
 
     this.valeurs = toSignal(this.vinForm.valueChanges, {initialValue: this.vinForm.value});
+
+    // Remplit l'apogée proposée, sans jamais écraser une saisie de l'utilisateur
+    effect(() => {
+      const proposee = this.apogeeProposee();
+      untracked(() => this.remplirApogee(proposee));
+    });
   }
 
   ouvrirAjout() {
@@ -271,6 +322,30 @@ export class VinFormComponent {
     this.vinForm.markAsDirty();
   }
 
+  private remplirApogee(proposee: ApogeeProposee | null) {
+    const debut = this.vinForm.value.apogeeDebut || null;
+    const fin = this.vinForm.value.apogeeFin || null;
+    const precedente = this.apogeeRemplie();
+    const champsLibres = (!debut && !fin)
+      || (!!precedente && debut === precedente.debut && fin === precedente.fin);
+
+    if (!champsLibres) {
+      // L'utilisateur a saisi sa propre apogée : on n'y touche plus
+      this.apogeeRemplie.set(null);
+      return;
+    }
+    if (!proposee) {
+      // Plus de proposition (autre vin saisi) : on retire celle qu'on avait mise
+      if (precedente) this.vinForm.patchValue({apogeeDebut: null, apogeeFin: null});
+      this.apogeeRemplie.set(null);
+      return;
+    }
+    if (debut !== proposee.debut || fin !== proposee.fin) {
+      this.vinForm.patchValue({apogeeDebut: proposee.debut, apogeeFin: proposee.fin});
+    }
+    this.apogeeRemplie.set(proposee);
+  }
+
   private ouvrir(champAFocaliser: string) {
     this.ouvert.set(true);
     // La page derrière le panneau ne défile plus
@@ -306,6 +381,7 @@ export class VinFormComponent {
   private reinitialiser() {
     this.vinEnEdition.set(null);
     this.suggestionsVisibles.set(false);
+    this.apogeeRemplie.set(null);
     this.vinForm.get('quantite')?.setValidators([Validators.required, Validators.min(1)]);
 
     this.vinForm.reset({

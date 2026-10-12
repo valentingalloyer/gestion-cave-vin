@@ -261,6 +261,13 @@ input.invalid {
   color: var(--texte-2);
 }
 
+/* Apogée proposée automatiquement */
+.aide {
+  margin: -6px 0 16px;
+  font-size: 0.85rem;
+  color: var(--texte-2);
+}
+
 /* Même vin et même millésime déjà en cave */
 .doublon {
   margin-top: 24px;

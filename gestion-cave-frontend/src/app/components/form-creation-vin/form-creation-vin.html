@@ -138,6 +138,10 @@
         </div>
       </div>
 
+      @if (mentionApogee(); as mention) {
+        <p class="aide">{{ mention }}</p>
+      }
+
       <div class="form-group full-width">
         <label for="notePersonnelle">Commentaires et accords</label>
         <textarea id="notePersonnelle" formControlName="notePersonnelle" rows="3" placeholder="Parfait avec un gibier"></textarea>
