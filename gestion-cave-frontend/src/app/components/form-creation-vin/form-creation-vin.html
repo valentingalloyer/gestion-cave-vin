@@ -26,9 +26,30 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group champ-suggestions">
         <label for="nom">Nom du vin</label>
-        <input id="nom" formControlName="nom" placeholder="Château Margaux">
+        <input id="nom" formControlName="nom" placeholder="Château Margaux" autocomplete="off"
+               role="combobox" aria-autocomplete="list" aria-controls="suggestions-vins"
+               [attr.aria-expanded]="suggestionsVisibles() && suggestions().length > 0"
+               [attr.aria-activedescendant]="suggestionActive() >= 0 ? 'suggestion-' + suggestionActive() : null"
+               (input)="onNomSaisi()" (keydown)="onNomClavier($event)" (blur)="suggestionsVisibles.set(false)">
+        @if (suggestionsVisibles() && suggestions().length > 0) {
+          <!-- mousedown + preventDefault : le champ garde le focus pendant le clic -->
+          <ul id="suggestions-vins" class="suggestions" role="listbox" aria-label="Vins déjà dans la cave">
+            @for (s of suggestions(); track s.vin.id; let i = $index) {
+              <li [id]="'suggestion-' + i" role="option" [attr.aria-selected]="i === suggestionActive()"
+                  [class.active]="i === suggestionActive()"
+                  (mousedown)="$event.preventDefault(); choisirSuggestion(s)">
+                <span class="pastille" [class]="classeCouleur(s.vin)"></span>
+                <span class="suggestion-texte">
+                  <strong>{{ s.vin.nom }}</strong>
+                  <span>{{ s.vin.domaine }} · {{ s.vin.appellation }}</span>
+                </span>
+                <span class="suggestion-millesimes">{{ s.millesimes }} millésime{{ s.millesimes > 1 ? 's' : '' }}</span>
+              </li>
+            }
+          </ul>
+        }
       </div>
 
       <div class="form-group">
@@ -78,6 +99,18 @@
 
     </div>
 
+    @if (doublon(); as existant) {
+      <div class="doublon" role="status">
+        <p>
+          Vous avez déjà <strong>{{ existant.quantite }} bouteille{{ existant.quantite > 1 ? 's' : '' }}</strong>
+          de {{ existant.nom }} {{ existant.millesime }}@if (existant.emplacement) { ({{ existant.emplacement }})}.
+        </p>
+        <button type="button" class="btn-principal" (click)="ajouterAuDoublon()">
+          Ajouter {{ vinForm.value.quantite || 1 }} bouteille{{ (vinForm.value.quantite || 1) > 1 ? 's' : '' }} à cette référence
+        </button>
+      </div>
+    }
+
     <div class="expert-section">
       <h3>Dégustation</h3>
 
@@ -112,9 +145,12 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn-principal" [disabled]="vinForm.invalid">
-        {{ vinEnEdition() ? "Enregistrer" : "Ajouter à la cave" }}
+      <button type="submit" [class]="doublon() ? 'btn-secondaire' : 'btn-principal'" [disabled]="vinForm.invalid">
+        {{ vinEnEdition() ? "Enregistrer" : doublon() ? "Créer une référence séparée" : "Ajouter à la cave" }}
       </button>
+      @if (!vinEnEdition() && !doublon()) {
+        <button type="button" class="btn-secondaire" [disabled]="vinForm.invalid" (click)="onSubmit(true)">Ajouter et continuer</button>
+      }
       @if (vinEnEdition()) {
         <button type="button" class="btn-secondaire" (click)="ajouterMillesimeDepuisEdition()">Ajouter un millésime</button>
         <button type="button" class="btn-secondaire btn-supprimer" (click)="supprimer()">Supprimer</button>

@@ -3,6 +3,7 @@ import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
 import { CaveCacheService } from '../../services/cave-cache';
 import { Apogee, apogeeDe, estABoire } from '../../models/apogee';
+import { normaliser } from '../../models/texte';
 import {CommonModule} from '@angular/common';
 
 export interface RegionDeVins {
@@ -43,7 +44,7 @@ export class VinListComponent implements OnInit {
   collapsedRegions = signal<Set<string>>(new Set());
 
   filteredAndSortedVins = computed(() => {
-    const query = this.normaliser(this.searchQuery());
+    const query = normaliser(this.searchQuery());
     const couleur = this.filtreCouleur();
     let items = this.vins();
 
@@ -54,15 +55,15 @@ export class VinListComponent implements OnInit {
     if (query) {
       items = items.filter(v => {
         // On crée une grande chaîne normalisée avec toutes les infos du vin
-        const content = this.normaliser(`${v.nom} ${v.domaine} ${v.appellation} ${v.millesime} ${v.emplacement}`);
+        const content = normaliser(`${v.nom} ${v.domaine} ${v.appellation} ${v.millesime} ${v.emplacement}`);
         return content.includes(query);
       });
     }
 
     // Tri insensible aux accents et à la ponctuation : "Chateau Margaux" se range avec "Château Margaux"
     return [...items].sort((a, b) =>
-      this.normaliser(a.nom).localeCompare(this.normaliser(b.nom))
-      || this.normaliser(a.domaine).localeCompare(this.normaliser(b.domaine))
+      normaliser(a.nom).localeCompare(normaliser(b.nom))
+      || normaliser(a.domaine).localeCompare(normaliser(b.domaine))
       || a.millesime - b.millesime);
   });
 
@@ -74,7 +75,7 @@ export class VinListComponent implements OnInit {
 
     for (const vin of this.filteredAndSortedVins()) {
       // Même région malgré des différences d'accents ou d'espaces : on garde le premier nom rencontré
-      const cle = this.normaliser(vin.appellation || 'Sans région');
+      const cle = normaliser(vin.appellation || 'Sans région');
       if (!parRegion.has(cle)) {
         parRegion.set(cle, {nom: vin.appellation || 'Sans région', vins: [], bouteilles: 0});
       }
@@ -199,15 +200,5 @@ export class VinListComponent implements OnInit {
 
   private compterBouteilles(condition: (vin: Vin) => boolean): number {
     return this.filteredAndSortedVins().filter(condition).reduce((total, vin) => total + vin.quantite, 0);
-  }
-
-  private normaliser(str: string): string {
-    if (!str) return '';
-    return str
-      .toLowerCase()
-      .normalize("NFD") // Sépare les accents des lettres
-      .replace(/[̀-ͯ]/g, "") // Supprime les accents
-      .replace(/[^a-z0-9]/g, "") // Supprime tout ce qui n'est pas lettre ou chiffre (espaces, tirets...)
-      .trim();
   }
 }

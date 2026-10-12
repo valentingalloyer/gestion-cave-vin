@@ -207,3 +207,68 @@ input.invalid {
   background: var(--danger);
   color: var(--surface);
 }
+
+/* Suggestions sous le nom : vins déjà dans la cave */
+.champ-suggestions {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  /* Plus large que le champ, pour lire les noms en entier */
+  width: max(100%, 380px);
+  max-width: calc(100vw - 48px);
+  box-sizing: border-box;
+  margin: 4px 0 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+}
+
+.suggestions li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.suggestions li.active, .suggestions li:hover {
+  background: var(--surface-2);
+}
+
+.suggestion-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestion-texte strong, .suggestion-texte span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestion-texte span, .suggestion-millesimes {
+  font-size: 0.8rem;
+  color: var(--texte-2);
+}
+
+/* Même vin et même millésime déjà en cave */
+.doublon {
+  margin-top: 24px;
+  padding: 12px 14px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+}
+
+.doublon p {
+  margin: 0 0 10px;
+}

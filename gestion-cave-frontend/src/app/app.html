@@ -33,7 +33,7 @@
   <app-vin-list #liste
                 (ajouterBouteille)="formulaire.ouvrirAjout()"
                 (modifierVin)="formulaire.modifier($event)"></app-vin-list>
-  <app-vin-form #formulaire (caveModifiee)="liste.chargerVins()"></app-vin-form>
+  <app-vin-form #formulaire [vins]="liste.vins()" (caveModifiee)="liste.chargerVins()"></app-vin-form>
 } @else {
   <app-login></app-login>
 }
