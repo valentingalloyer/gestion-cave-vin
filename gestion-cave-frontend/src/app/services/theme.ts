@@ -1,10 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 
-export type Theme = 'clair' | 'auto' | 'sombre';
+export type Theme = 'clair' | 'sombre';
 
 /**
- * Thème choisi par l'utilisateur, mémorisé dans le navigateur.
- * "auto" suit le réglage clair/sombre de l'appareil.
+ * Thème clair ou sombre, mémorisé dans le navigateur.
+ * Sans choix enregistré, on suit le réglage de l'appareil.
  * Le même attribut est déjà posé dans index.html avant le démarrage d'Angular,
  * pour éviter un flash de thème clair au chargement.
  */
@@ -17,7 +17,8 @@ export class ThemeService {
     this.appliquer(this.theme());
   }
 
-  choisir(theme: Theme) {
+  basculer() {
+    const theme: Theme = this.theme() === 'sombre' ? 'clair' : 'sombre';
     this.theme.set(theme);
     this.appliquer(theme);
     try {
@@ -30,10 +31,12 @@ export class ThemeService {
   private lire(): Theme {
     try {
       const theme = localStorage.getItem(this.cle);
-      return theme === 'clair' || theme === 'sombre' ? theme : 'auto';
+      if (theme === 'clair' || theme === 'sombre') return theme;
     } catch {
-      return 'auto';
+      // Stockage indisponible : on suit l'appareil
     }
+    const appareilSombre = typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
+    return appareilSombre ? 'sombre' : 'clair';
   }
 
   private appliquer(theme: Theme) {

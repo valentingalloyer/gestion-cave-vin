@@ -22,10 +22,18 @@ describe('App', () => {
     expect(page.querySelector('h1')?.textContent).toContain('La cave à Jack');
   });
 
-  it('propose les trois thèmes', async () => {
+  it('bascule entre clair et sombre et mémorise le choix', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const boutons = (fixture.nativeElement as HTMLElement).querySelectorAll('.theme-choix button');
-    expect(boutons).toHaveLength(3);
+    const bouton = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.theme-bascule')!;
+    const depart = document.documentElement.dataset['theme'];
+
+    bouton.click();
+    await fixture.whenStable();
+    const apres = document.documentElement.dataset['theme'];
+
+    expect(['clair', 'sombre']).toContain(apres);
+    expect(apres).not.toBe(depart);
+    expect(localStorage.getItem('theme')).toBe(apres);
   });
 });

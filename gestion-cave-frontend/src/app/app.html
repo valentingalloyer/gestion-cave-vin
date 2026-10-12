@@ -1,25 +1,15 @@
 <header class="barre-haut">
-  <div class="theme-choix" role="radiogroup" aria-label="Thème">
-    @for (t of themes; track t.valeur) {
-      <button type="button" role="radio"
-              [attr.aria-checked]="themeService.theme() === t.valeur"
-              [class.actif]="themeService.theme() === t.valeur"
-              [attr.aria-label]="t.libelle" [title]="t.libelle"
-              (click)="themeService.choisir(t.valeur)">
-        @switch (t.valeur) {
-          @case ('clair') {
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-          }
-          @case ('auto') {
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" class="plein"/></svg>
-          }
-          @case ('sombre') {
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
-          }
-        }
-      </button>
+  <!-- Un seul bouton : il montre le thème vers lequel on bascule -->
+  <button type="button" class="theme-bascule"
+          (click)="themeService.basculer()">
+    @if (themeService.theme() === 'sombre') {
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      Mode clair
+    } @else {
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      Mode sombre
     }
-  </div>
+  </button>
 
   @if (authService.isLoggedIn()) {
     <nav class="onglets" aria-label="Navigation">
