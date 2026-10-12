@@ -126,7 +126,7 @@
 .bottle-item {
   display: grid;
   /* 1:An | 2:Apogée | 3:Note | 4:Commentaire | 5:Loc | 6:Actions */
-  grid-template-columns: 55px 110px 100px 1fr 100px 165px;
+  grid-template-columns: 55px 110px 100px 1fr 100px 190px;
   align-items: center;
   gap: 12px;
   padding: 8px 15px;
@@ -234,19 +234,12 @@
   font-weight: 600;
 }
 
-.btn-trash {
-  background: none;
-  border: none;
-  color: #ccc;
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
-}
-
 .btn-trash:hover {
   color: #e74c3c;
+}
+
+.btn-edit:hover {
+  color: var(--primary);
 }
 
 .chevron {

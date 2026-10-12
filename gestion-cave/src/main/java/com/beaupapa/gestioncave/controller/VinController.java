@@ -46,7 +46,18 @@ public class VinController {
     public Vin updateVin(@AuthenticationPrincipal Long userId, @PathVariable Long id, @RequestBody Vin vinDetails) {
         Vin vin = trouverVin(id, userId);
 
+        // Tout est modifiable sauf l'id et le propriétaire
+        vin.setNom(vinDetails.getNom());
+        vin.setDomaine(vinDetails.getDomaine());
+        vin.setMillesime(vinDetails.getMillesime());
+        vin.setCouleur(vinDetails.getCouleur());
+        vin.setAppellation(vinDetails.getAppellation());
         vin.setQuantite(vinDetails.getQuantite());
+        vin.setEmplacement(vinDetails.getEmplacement());
+        vin.setNote(vinDetails.getNote());
+        vin.setApogeeDebut(vinDetails.getApogeeDebut());
+        vin.setApogeeFin(vinDetails.getApogeeFin());
+        vin.setNotePersonnelle(vinDetails.getNotePersonnelle());
 
         return vinRepository.save(vin);
     }

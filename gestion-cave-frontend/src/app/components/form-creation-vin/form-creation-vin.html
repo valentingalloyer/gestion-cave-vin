@@ -1,5 +1,5 @@
 <div class="form-container" [class]="currentCouleur" [class.highlight-active]="isHighlighted()">
-  <h3>Ajouter une nouvelle bouteille</h3>
+  <h3>{{ vinEnEdition() ? "Modifier la bouteille" : "Ajouter une nouvelle bouteille" }}</h3>
   <form [formGroup]="vinForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
 
@@ -107,6 +107,13 @@
       </div>
     </div>
 
-    <button type="submit" [disabled]="vinForm.invalid">Ajouter à la cave</button>
+    <div class="form-actions">
+      <button type="submit" [disabled]="vinForm.invalid">
+        {{ vinEnEdition() ? "Enregistrer les modifications" : "Ajouter à la cave" }}
+      </button>
+      @if (vinEnEdition()) {
+        <button type="button" class="btn-annuler" (click)="annulerModification()">Annuler</button>
+      }
+    </div>
   </form>
 </div>

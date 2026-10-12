@@ -16,8 +16,10 @@ export class VinFormComponent {
   readonly REGIONS_GROUPEES = REGIONS_GROUPEES;
 
   vinForm: FormGroup;
-  vinAjoute = output<Vin>();
+  vinEnregistre = output<Vin>();
   isHighlighted = signal(false);
+  // Bouteille en cours de modification (null = mode ajout)
+  vinEnEdition = signal<Vin | null>(null);
 
   get currentCouleur(): string {
     return this.vinForm.get('couleur')?.value?.toLowerCase().replace('é', 'e') || 'rouge';
@@ -44,45 +46,95 @@ export class VinFormComponent {
   }
 
   onSubmit() {
-    if (this.vinForm.valid) {
-      const nouveauVin = this.vinForm.value;
-      this.vinService.addVin(nouveauVin).subscribe((vinEnregistre) => {
-        this.vinAjoute.emit(vinEnregistre);
-        this.toastService.show(`🍷 ${vinEnregistre.nom} ajouté avec succès !`)
-        this.vinForm.reset({
-          millesime: new Date().getFullYear(),
-          couleur: 'Rouge',
-          quantite: 1,
-          emplacement: '',
-          apogeeDebut: null,
-          apogeeFin: null,
-          notePersonnelle: ''
-        });
+    if (this.vinForm.invalid) return;
+
+    const vinEnEdition = this.vinEnEdition();
+
+    if (vinEnEdition) {
+      this.vinService.updateVin({...this.vinForm.value, id: vinEnEdition.id}).subscribe((vinModifie) => {
+        this.vinEnregistre.emit(vinModifie);
+        this.toastService.show(`✏️ ${vinModifie.nom} ${vinModifie.millesime} modifié !`);
+        this.reinitialiser();
+      });
+    } else {
+      this.vinService.addVin(this.vinForm.value).subscribe((vinAjoute) => {
+        this.vinEnregistre.emit(vinAjoute);
+        this.toastService.show(`🍷 ${vinAjoute.nom} ajouté avec succès !`);
+        this.reinitialiser();
       });
     }
   }
 
-  // Dans vin-form.component.ts
-  remplirDepuisExistant(vin: any) {
+  remplirDepuisExistant(vin: Vin) {
+    // Un nouveau millésime est un ajout, même si une modification était en cours
+    this.reinitialiser();
+
     this.vinForm.patchValue({
       nom: vin.nom,
       domaine: vin.domaine,
       appellation: vin.appellation,
-      couleur: vin.couleur,
-      millesime: new Date().getFullYear(),
-      quantite: 1,
-      emplacement: ''
+      couleur: vin.couleur
     });
 
+    this.mettreEnAvant('millesime');
+  }
+
+  modifier(vin: Vin) {
+    this.vinEnEdition.set(vin);
+    // Une bouteille modifiée peut être à 0 (bue mais gardée en mémoire)
+    this.vinForm.get('quantite')?.setValidators([Validators.required, Validators.min(0)]);
+
+    this.vinForm.reset({
+      nom: vin.nom,
+      domaine: vin.domaine,
+      appellation: vin.appellation,
+      millesime: vin.millesime,
+      couleur: vin.couleur,
+      quantite: vin.quantite,
+      emplacement: vin.emplacement ?? '',
+      // L'API renvoie 0 quand l'apogée n'est pas renseignée
+      apogeeDebut: vin.apogeeDebut || null,
+      apogeeFin: vin.apogeeFin || null,
+      notePersonnelle: vin.notePersonnelle ?? '',
+      note: vin.note ?? 0
+    });
+
+    this.mettreEnAvant('nom');
+  }
+
+  annulerModification() {
+    this.reinitialiser();
+  }
+
+  setNote(valeur: number) {
+    this.vinForm.patchValue({ note: valeur });
+  }
+
+  private reinitialiser() {
+    this.vinEnEdition.set(null);
+    this.vinForm.get('quantite')?.setValidators([Validators.required, Validators.min(1)]);
+
+    this.vinForm.reset({
+      nom: '',
+      domaine: '',
+      appellation: '',
+      millesime: new Date().getFullYear(),
+      couleur: 'Rouge',
+      quantite: 1,
+      emplacement: '',
+      apogeeDebut: null,
+      apogeeFin: null,
+      notePersonnelle: '',
+      note: 0
+    });
+  }
+
+  private mettreEnAvant(champ: string) {
     this.isHighlighted.set(true);
     setTimeout(() => {
       this.isHighlighted.set(false);
     }, 3000);
 
-    document.getElementById('millesime')?.focus();
-  }
-
-  setNote(valeur: number) {
-    this.vinForm.patchValue({ note: valeur });
+    document.getElementById(champ)?.focus();
   }
 }

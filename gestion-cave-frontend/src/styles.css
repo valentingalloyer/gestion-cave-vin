@@ -36,3 +36,15 @@ h1, h3 {
   border-bottom: 2px solid var(--secondary);
   padding-bottom: 10px;
 }
+
+/* Bouton réduit à une icône (modifier, supprimer...) */
+.btn-icon {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}

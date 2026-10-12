@@ -215,3 +215,19 @@ textarea:focus {
   display: flex;
   gap: 10px;
 }
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-annuler {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-annuler:hover:not(:disabled) {
+  background: var(--secondary);
+}

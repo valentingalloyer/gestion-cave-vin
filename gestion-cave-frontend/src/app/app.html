@@ -3,9 +3,14 @@
     <span>👤 {{ authService.username() }}</span>
     <button type="button" (click)="authService.logout()">Se déconnecter</button>
   </div>
-  <app-vin-form #formulaire (vinAjoute)="liste.chargerVins()"></app-vin-form>
+  <app-vin-form #formulaire (vinEnregistre)="liste.chargerVins()"></app-vin-form>
   <hr>
-  <app-vin-list #liste (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"></app-vin-list>
+  <app-vin-list #liste (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"
+                (modifierVin)="formulaire.modifier($event)"></app-vin-list>
 } @else {
   <app-login></app-login>
+}
+
+@if (toastService.message(); as message) {
+  <div class="toast" role="status" (click)="toastService.fermer()">{{ message }}</div>
 }

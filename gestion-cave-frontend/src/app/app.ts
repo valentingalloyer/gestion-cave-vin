@@ -5,6 +5,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {VinFormComponent} from './components/form-creation-vin/form-creation-vin';
 import {LoginComponent} from './components/login/login';
 import {AuthService} from './services/auth-service';
+import {ToastService} from './services/toast';
 
 @Component({
   selector: 'app-root',
@@ -15,5 +16,6 @@ import {AuthService} from './services/auth-service';
 export class App {
   protected readonly title = signal('Gestion de cave à vin');
 
-  constructor(protected authService: AuthService) {}
+  constructor(protected authService: AuthService,
+              protected toastService: ToastService) {}
 }

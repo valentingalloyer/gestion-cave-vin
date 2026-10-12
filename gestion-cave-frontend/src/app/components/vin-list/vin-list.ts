@@ -23,6 +23,7 @@ export class VinListComponent implements OnInit {
   vins = signal<Vin[]>([]);
 
   @Output() preparerNouveauMillesime = new EventEmitter<Vin>();
+  @Output() modifierVin = new EventEmitter<Vin>();
 
   searchQuery = signal('');
   openedGroups = signal<Set<string>>(new Set());
@@ -163,6 +164,11 @@ export class VinListComponent implements OnInit {
 
   onAjouterMillesime(vin: Vin) {
     this.preparerNouveauMillesime.emit(vin);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onModifier(vin: Vin) {
+    this.modifierVin.emit(vin);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
