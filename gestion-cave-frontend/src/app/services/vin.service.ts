@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {catchError, Observable, retry, throwError, timer} from 'rxjs';
 import { Vin } from '../models/vin.model';
-import {environment} from '../../environments/environment.prod';
+import {environment} from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class VinService {

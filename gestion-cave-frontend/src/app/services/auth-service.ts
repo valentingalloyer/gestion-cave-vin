@@ -1,7 +1,7 @@
 import {computed, Injectable, signal} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable, retry, tap, throwError, timer} from 'rxjs';
-import {environment} from '../../environments/environment.prod';
+import {environment} from '../../environments/environment';
 
 export interface AuthResponse {
   token: string;

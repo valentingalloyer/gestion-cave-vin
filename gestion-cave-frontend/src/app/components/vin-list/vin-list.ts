@@ -84,7 +84,7 @@ export class VinListComponent implements OnInit {
       });
     }
 
-    return items.sort((a, b) => a.nom.localeCompare(b.nom));
+    return [...items].sort((a, b) => a.nom.localeCompare(b.nom));
   });
 
   nombreTotalBouteilles = computed(() => {
