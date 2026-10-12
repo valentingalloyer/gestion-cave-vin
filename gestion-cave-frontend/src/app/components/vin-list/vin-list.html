@@ -62,6 +62,7 @@
                 <span class="nom">{{ v.nom }}</span>
                 <span class="details">{{ v.domaine }}@if (v.emplacement) { · {{ v.emplacement }}}</span>
               </span>
+              <span class="commentaire" [title]="v.notePersonnelle ?? ''">{{ v.notePersonnelle }}</span>
               <span class="apogee">
                 @if (v.apogeeDebut && v.apogeeFin) {
                   {{ v.apogeeDebut }}–{{ v.apogeeFin }}

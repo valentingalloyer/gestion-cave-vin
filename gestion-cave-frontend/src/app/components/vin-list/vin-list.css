@@ -135,7 +135,7 @@
 /* Une bouteille = une ligne */
 .ligne {
   display: grid;
-  grid-template-columns: 10px 44px minmax(0, 1fr) 84px 72px auto;
+  grid-template-columns: 10px 48px minmax(0, 1.3fr) minmax(0, 1fr) 96px 76px auto;
   align-items: center;
   gap: 12px;
   padding: 9px 14px;
@@ -164,13 +164,23 @@
 }
 
 .details {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--texte-2);
 }
 
 .apogee {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--texte-2);
+}
+
+/* Commentaire personnel, en entier au survol */
+.commentaire {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--texte-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .note {
@@ -212,6 +222,17 @@
   text-align: center;
   padding: 32px 16px;
   color: var(--texte-2);
+}
+
+/* Écran étroit : plus de place pour le commentaire */
+@media (max-width: 900px) {
+  .ligne {
+    grid-template-columns: 10px 44px minmax(0, 1fr) 90px 72px auto;
+  }
+
+  .commentaire {
+    display: none;
+  }
 }
 
 /* Téléphone : on garde l'essentiel */
