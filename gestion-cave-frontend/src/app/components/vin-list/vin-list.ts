@@ -1,6 +1,7 @@
-import {Component, computed, EventEmitter, OnInit, Output, signal} from '@angular/core';
+import {Component, computed, effect, EventEmitter, OnInit, Output, signal} from '@angular/core';
 import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
+import { CaveCacheService } from '../../services/cave-cache';
 import {CommonModule} from '@angular/common';
 import { REGIONS_GROUPEES} from '../../models/groupeVin.model';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -20,6 +21,11 @@ export class VinListComponent implements OnInit {
   isLoading = signal(true);
   isTakingLonger = signal(false);
   vins = signal<Vin[]>([]);
+  // false tant que la liste affichée vient du cache et pas encore du serveur
+  synchronise = signal(false);
+  dateCache = signal<Date | null>(null);
+  // Le serveur n'a pas répondu malgré les nouvelles tentatives
+  serveurInjoignable = signal(false);
 
   @Output() preparerNouveauMillesime = new EventEmitter<Vin>();
   @Output() modifierVin = new EventEmitter<Vin>();
@@ -96,9 +102,23 @@ export class VinListComponent implements OnInit {
 
   collapsedRegions = signal<Set<string>>(new Set());
 
-  constructor(private vinService: VinService) {}
+  constructor(private vinService: VinService,
+              private caveCache: CaveCacheService) {
+    // Chaque changement venant du serveur (chargement, +/-) met le cache à jour
+    effect(() => {
+      if (this.synchronise()) this.caveCache.ecrire(this.vins());
+    });
+  }
 
   ngOnInit(): void {
+    // Le serveur peut dormir : on montre tout de suite la dernière cave connue
+    const cache = this.caveCache.lire();
+    if (cache) {
+      this.vins.set(cache.vins);
+      this.dateCache.set(cache.date);
+      this.isLoading.set(false);
+    }
+
     this.chargerVins();
   }
 
@@ -113,6 +133,7 @@ export class VinListComponent implements OnInit {
     // Le loader plein écran n'apparaît qu'au premier chargement :
     // après un enregistrement, la liste se met à jour sans perdre la position dans la page
     if (this.vins().length === 0) this.isLoading.set(true);
+    this.serveurInjoignable.set(false);
 
     // Si au bout de 3 secondes on n'a toujours rien, on active le message spécial
     const timer = setTimeout(() => {
@@ -122,11 +143,13 @@ export class VinListComponent implements OnInit {
     this.vinService.getVins().subscribe({
       next: (data) => {
         this.vins.set(data);
+        this.synchronise.set(true);
         this.isLoading.set(false);
         this.isTakingLonger.set(false);
         clearTimeout(timer);
       },
       error: () => {
+        this.serveurInjoignable.set(true);
         this.isLoading.set(false);
         this.isTakingLonger.set(false);
       }

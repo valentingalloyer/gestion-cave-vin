@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/error").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/ping", "/error").permitAll()
                         .anyRequest().authenticated())
                 // Pas de token valide => 401 (le front renvoie alors vers l'écran de connexion)
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

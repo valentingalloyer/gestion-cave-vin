@@ -15,8 +15,24 @@
   <div class="container">
     <div class="liste-entete">
       <h1>La cave à Jack 🍷</h1>
-      <button type="button" class="btn-principal" (click)="ajouterBouteille.emit()">+ Ajouter une bouteille</button>
+      <button type="button" class="btn-principal" [disabled]="!synchronise()" (click)="ajouterBouteille.emit()">+ Ajouter une bouteille</button>
     </div>
+
+    @if (!synchronise()) {
+      <p class="bandeau-info" role="status">
+        @if (serveurInjoignable()) {
+          <strong>Le serveur ne répond pas.</strong>
+          @if (dateCache()) {
+            Voici votre cave telle qu'au {{ dateCache() | date:"d/MM 'à' HH:mm" }}.
+          }
+          <button type="button" class="btn-secondaire" (click)="chargerVins()">Réessayer</button>
+        } @else {
+          🍷 <strong>Le serveur se réveille…</strong>
+          Voici votre cave telle qu'au {{ dateCache() | date:"d/MM 'à' HH:mm" }}.
+          Les modifications seront possibles dans un instant.
+        }
+      </p>
+    }
 
     <div class="search-section">
       <div class="search-container">
@@ -61,6 +77,7 @@
                         <h4 class="domain-title">🏰 {{ domainGroup.key }}</h4>
                         <button
                           class="btn-mini-add"
+                          [disabled]="!synchronise()"
                           (click)="preparerNouveauMillesime.emit(domainGroup.value[0])"
                           title="Ajouter une autre année pour ce domaine">
                           <span class="plus-icon">+</span> Millésime
@@ -70,7 +87,7 @@
                         @for (v of domainGroup.value; track v.id) {
                           <div class="bottle-item" [class]="v.couleur.toLowerCase().replace('é', 'e')"
                                role="button" tabindex="0" [title]="'Modifier ' + v.nom + ' ' + v.millesime"
-                               (click)="modifierVin.emit(v)" (keydown.enter)="modifierVin.emit(v)">
+                               (click)="synchronise() && modifierVin.emit(v)" (keydown.enter)="synchronise() && modifierVin.emit(v)">
                             <span class="col-year">{{ v.millesime }}</span>
                             <div class="col-apogee" [title]="'À boire entre ' + v.apogeeDebut + ' et ' + v.apogeeFin">
                               @if (v.apogeeDebut && v.apogeeFin) {
@@ -91,9 +108,9 @@
                             <div class="col-actions">
                               <!-- Les +/- ne doivent pas ouvrir le panneau de modification -->
                               <div class="qty-control" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
-                                <button (click)="changerQuantite(v, -1)">-</button>
+                                <button [disabled]="!synchronise()" (click)="changerQuantite(v, -1)">-</button>
                                 <span class="qty">{{ v.quantite }}</span>
-                                <button (click)="changerQuantite(v, 1)">+</button>
+                                <button [disabled]="!synchronise()" (click)="changerQuantite(v, 1)">+</button>
                               </div>
                             </div>
                           </div>

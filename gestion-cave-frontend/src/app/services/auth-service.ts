@@ -2,6 +2,7 @@ import {computed, Injectable, signal} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Observable, retry, tap, throwError, timer} from 'rxjs';
 import {environment} from '../../environments/environment';
+import {CaveCacheService} from './cave-cache';
 
 export interface AuthResponse {
   token: string;
@@ -23,7 +24,8 @@ export class AuthService {
   username = signal<string | null>(localStorage.getItem('username'));
   isLoggedIn = computed(() => this.token() !== null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private caveCache: CaveCacheService) {}
 
   getToken(): string | null {
     return this.token();
@@ -32,6 +34,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    // La cave du compte précédent ne doit pas apparaître au suivant
+    this.caveCache.vider();
     this.token.set(null);
     this.username.set(null);
   }

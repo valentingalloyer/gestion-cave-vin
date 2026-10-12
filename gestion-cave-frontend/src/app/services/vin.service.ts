@@ -12,8 +12,9 @@ export class VinService {
 
   getVins(): Observable<Vin[]> {
     return this.http.get<Vin[]>(this.apiUrl).pipe(
+      // Un réveil de Render prend souvent plus d'une minute : on insiste ~3 minutes
       retry({
-        count: 10,
+        count: 60,
         // Inutile d'insister si on n'est pas (ou plus) connecté
         delay: (err: HttpErrorResponse) => err.status === 401 ? throwError(() => err) : timer(3000)
       }),
