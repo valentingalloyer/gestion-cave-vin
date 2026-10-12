@@ -22,6 +22,13 @@
   </div>
 
   @if (authService.isLoggedIn()) {
+    <nav class="onglets" aria-label="Navigation">
+      <button type="button" [class.actif]="vue() === 'cave'" [attr.aria-current]="vue() === 'cave' ? 'page' : null"
+              (click)="vue.set('cave')">Ma cave</button>
+      <button type="button" [class.actif]="vue() === 'journal'" [attr.aria-current]="vue() === 'journal' ? 'page' : null"
+              (click)="vue.set('journal')">Journal</button>
+    </nav>
+
     <div class="utilisateur">
       <span>{{ authService.username() }}</span>
       <button type="button" class="btn-secondaire" (click)="motDePasseOuvert.set(true)">Mot de passe</button>
@@ -31,13 +38,17 @@
 </header>
 
 @if (authService.isLoggedIn()) {
-  <app-vin-list #liste
-                (ajouterBouteille)="formulaire.ouvrirAjout()"
-                (modifierVin)="formulaire.modifier($event)"></app-vin-list>
+  @if (vue() === 'journal') {
+    <app-journal></app-journal>
+  } @else {
+    <app-vin-list #liste
+                  (ajouterBouteille)="formulaire.ouvrirAjout()"
+                  (modifierVin)="formulaire.modifier($event)"></app-vin-list>
+    <app-vin-form #formulaire [vins]="liste.vins()" (caveModifiee)="liste.chargerVins()"></app-vin-form>
+  }
   @if (motDePasseOuvert()) {
     <app-mot-de-passe (fermer)="motDePasseOuvert.set(false)"></app-mot-de-passe>
   }
-  <app-vin-form #formulaire [vins]="liste.vins()" (caveModifiee)="liste.chargerVins()"></app-vin-form>
 } @else {
   <app-login></app-login>
 }

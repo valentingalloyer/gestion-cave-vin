@@ -45,6 +45,33 @@
   fill: currentColor;
 }
 
+/* Ma cave / Journal */
+.onglets {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.onglets button {
+  font: inherit;
+  background: none;
+  border: none;
+  border-radius: var(--rayon);
+  padding: 6px 12px;
+  color: var(--texte-2);
+  cursor: pointer;
+}
+
+.onglets button:hover {
+  background: var(--surface-2);
+}
+
+.onglets button.actif {
+  color: var(--texte);
+  font-weight: 500;
+  background: var(--surface-2);
+}
+
 .utilisateur {
   display: flex;
   align-items: center;

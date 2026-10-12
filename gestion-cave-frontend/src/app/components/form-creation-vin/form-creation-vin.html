@@ -156,10 +156,35 @@
         <button type="button" class="btn-secondaire" [disabled]="vinForm.invalid || enregistrement()" (click)="onSubmit(true)">Ajouter et continuer</button>
       }
       @if (vinEnEdition()) {
+        <button type="button" class="btn-secondaire" (click)="ouvrirBouteille()">🍷 Ouvrir une bouteille</button>
         <button type="button" class="btn-secondaire" (click)="ajouterMillesimeDepuisEdition()">Ajouter un millésime</button>
         <button type="button" class="btn-secondaire btn-supprimer" [disabled]="enregistrement()" (click)="supprimer()">Supprimer</button>
       }
     </div>
   </form>
+
+  @if (historique().length > 0) {
+    <section class="historique">
+      <h3>Déjà ouvertes</h3>
+      <ul>
+        @for (d of historique(); track d.id) {
+          <li>
+            <span class="historique-date">{{ d.date | date:'d MMM yyyy' }}</span>
+            <span class="historique-texte">
+              {{ d.occasion || 'Sans occasion notée' }}
+              @if (d.note) { <span class="etoiles-lecture">{{ '★'.repeat(d.note) }}</span> }
+              @if (d.commentaire) { <em>{{ d.commentaire }}</em> }
+            </span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
 </div>
+
+@if (degustationOuverte()) {
+  @if (vinEnEdition(); as vin) {
+    <app-ouvrir-bouteille [vin]="vin" (fermer)="degustationOuverte.set(false)" (ouverte)="apresDegustation()"></app-ouvrir-bouteille>
+  }
+}
 }

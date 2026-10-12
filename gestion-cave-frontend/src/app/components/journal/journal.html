@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="entete">
+    <h1 class="titre-serif">Journal de dégustation</h1>
+  </div>
+
+  @if (chargement()) {
+    <p class="secondaire">Chargement du journal…</p>
+  } @else if (erreur()) {
+    <p class="bandeau-info" role="alert">
+      <strong>Le serveur ne répond pas.</strong>
+      <button type="button" class="btn-secondaire" (click)="charger()">Réessayer</button>
+    </p>
+  } @else if (degustations().length === 0) {
+    <div class="vide">
+      <p><strong>Aucune bouteille ouverte pour l'instant.</strong></p>
+      <p class="secondaire">Dans la cave, cliquez sur une bouteille puis sur « Ouvrir une bouteille » pour noter une dégustation.</p>
+    </div>
+  } @else {
+    <div class="chiffres">
+      <div><span>Bouteilles ouvertes</span><strong>{{ degustations().length }}</strong></div>
+      <div><span>Cette année</span><strong>{{ ouvertesCetteAnnee() }}</strong></div>
+      <div><span>Note moyenne</span><strong>{{ noteMoyenne() === null ? '–' : (noteMoyenne() | number:'1.0-1') + ' / 5' }}</strong></div>
+    </div>
+
+    @for (m of mois(); track m.cle) {
+      <section class="mois">
+        <h2>{{ m.cle + '-01' | date:'MMMM yyyy' }}</h2>
+        @for (d of m.degustations; track d.id) {
+          <article class="degustation">
+            <span class="date">{{ d.date | date:'d MMM' }}</span>
+            <div class="contenu">
+              <p class="vin">
+                <span class="pastille" [class]="classeCouleur(d)"></span>
+                <strong>{{ d.nom }} {{ d.millesime }}</strong>
+                <span class="secondaire">· {{ d.domaine }}</span>
+                @if (d.note) { <span class="etoiles" [attr.aria-label]="d.note + ' sur 5'">{{ '★'.repeat(d.note) }}</span> }
+              </p>
+              @if (d.occasion) { <p class="occasion">{{ d.occasion }}</p> }
+              @if (d.commentaire) { <p class="commentaire">{{ d.commentaire }}</p> }
+            </div>
+            <button type="button" class="btn-fermer" title="Retirer du journal" aria-label="Retirer du journal" (click)="supprimer(d)">✕</button>
+          </article>
+        }
+      </section>
+    }
+  }
+</div>

@@ -2,11 +2,15 @@ import {Component, computed, effect, HostListener, input, output, Signal, signal
 import {toSignal} from '@angular/core/rxjs-interop';
 import {finalize, Observable} from 'rxjs';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { VinService } from '../../services/vin.service';
 import { Vin } from '../../models/vin.model';
 import {ToastService} from '../../services/toast';
 import {REGIONS_GROUPEES} from '../../models/groupeVin.model';
 import {normaliser} from '../../models/texte';
+import {Degustation} from '../../models/degustation.model';
+import {DegustationService} from '../../services/degustation.service';
+import {OuvrirBouteilleComponent} from '../ouvrir-bouteille/ouvrir-bouteille';
 
 /** Champs du formulaire utiles aux suggestions et aux doublons */
 interface ValeursSaisies {
@@ -37,7 +41,7 @@ export interface SuggestionVin {
 @Component({
   selector: 'app-vin-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe, OuvrirBouteilleComponent],
   templateUrl: './form-creation-vin.html',
   styleUrl: './form-creation-vin.css'
 })
@@ -53,6 +57,10 @@ export class VinFormComponent {
   ouvert = signal(false);
   // Une requête est en cours : les boutons sont désactivés (pas de double envoi)
   enregistrement = signal(false);
+  // Fenêtre "Ouvrir une bouteille" par-dessus le panneau
+  degustationOuverte = signal(false);
+  // Dégustations déjà notées pour la bouteille en cours de modification
+  historique = signal<Degustation[]>([]);
   // Bouteille en cours de modification (null = mode ajout)
   vinEnEdition = signal<Vin | null>(null);
 
@@ -138,6 +146,7 @@ export class VinFormComponent {
 
   constructor(private fb: FormBuilder,
               private vinService: VinService,
+              private degustationService: DegustationService,
               private toastService: ToastService) {
     const anneeActuelle = new Date().getFullYear();
 
@@ -203,7 +212,24 @@ export class VinFormComponent {
       note: vin.note ?? 0
     });
 
+    this.degustationService.lister().subscribe({
+      next: degustations => this.historique.set(degustations.filter(d => d.vinId === vin.id)),
+      error: () => {}
+    });
+
     this.ouvrir('nom');
+  }
+
+  ouvrirBouteille() {
+    // Le panneau se ferme après la dégustation : on ne perd pas une modification sans prévenir
+    if (this.abandonConfirme()) {
+      this.degustationOuverte.set(true);
+    }
+  }
+
+  apresDegustation() {
+    this.degustationOuverte.set(false);
+    this.terminer();
   }
 
   ajouterMillesimeDepuisEdition() {
@@ -315,6 +341,8 @@ export class VinFormComponent {
 
   @HostListener('document:keydown.escape')
   fermer() {
+    // Échap ferme d'abord la fenêtre "Ouvrir une bouteille", qui gère sa propre touche Échap
+    if (this.degustationOuverte()) return;
     if (this.ouvert() && this.abandonConfirme()) {
       this.fermerPanneau();
     }
@@ -394,6 +422,8 @@ export class VinFormComponent {
 
   private reinitialiser() {
     this.vinEnEdition.set(null);
+    this.degustationOuverte.set(false);
+    this.historique.set([]);
     this.suggestionsVisibles.set(false);
     this.apogeeRemplie.set(null);
     this.vinForm.get('quantite')?.setValidators([Validators.required, Validators.min(1)]);

@@ -39,20 +39,6 @@
   font-size: 1.3rem;
 }
 
-.btn-fermer {
-  background: none;
-  border: none;
-  border-radius: var(--rayon);
-  color: var(--texte-2);
-  padding: 6px 10px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.btn-fermer:hover {
-  background: var(--surface-2);
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -194,6 +180,46 @@ input.invalid {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 24px;
+}
+
+/* Dégustations déjà notées pour ce vin */
+.historique {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bordure);
+}
+
+.historique h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.historique ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.historique li {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 0.9rem;
+}
+
+.historique-date {
+  flex-shrink: 0;
+  width: 96px;
+  color: var(--texte-2);
+}
+
+.historique em {
+  display: block;
+  color: var(--texte-2);
+}
+
+.etoiles-lecture {
+  color: var(--etoile);
 }
 
 /* Supprimer est rejeté à droite, à l'écart des autres actions */

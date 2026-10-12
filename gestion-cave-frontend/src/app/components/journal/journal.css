@@ -1,0 +1,106 @@
+.entete {
+  margin: 8px 0 20px;
+}
+
+.entete h1 {
+  font-size: 1.7rem;
+}
+
+.secondaire {
+  color: var(--texte-2);
+}
+
+.vide {
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.vide p {
+  margin: 4px 0;
+}
+
+.chiffres {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.chiffres div {
+  background: var(--surface-2);
+  border-radius: var(--rayon);
+  padding: 10px 14px;
+}
+
+.chiffres span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--texte-2);
+}
+
+.chiffres strong {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+/* Un mois = une carte */
+.mois {
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.mois h2 {
+  padding: 10px 14px;
+  background: var(--surface-2);
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.degustation {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--bordure);
+}
+
+.date {
+  flex-shrink: 0;
+  width: 60px;
+  color: var(--texte-2);
+  font-size: 0.9rem;
+}
+
+.contenu {
+  flex: 1;
+  min-width: 0;
+}
+
+.contenu p {
+  margin: 0;
+}
+
+.vin {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.etoiles {
+  color: var(--etoile);
+  font-size: 0.9rem;
+}
+
+.contenu .occasion {
+  margin-top: 2px;
+}
+
+.contenu .commentaire {
+  margin-top: 4px;
+  font-style: italic;
+  color: var(--texte-2);
+}

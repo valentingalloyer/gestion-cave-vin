@@ -1,0 +1,41 @@
+<div class="modale-fond" (click)="fermer.emit()"></div>
+<div class="modale" role="dialog" aria-modal="true" aria-labelledby="titre-ouvrir">
+  <div class="modale-entete">
+    <h2 id="titre-ouvrir" class="titre-serif">Ouvrir une bouteille</h2>
+    <button type="button" class="btn-fermer" aria-label="Fermer" (click)="fermer.emit()">✕</button>
+  </div>
+
+  <p class="vin">
+    <strong>{{ vin().nom }} {{ vin().millesime }}</strong><br>
+    <span>{{ vin().domaine }} · {{ vin().quantite }} bouteille{{ vin().quantite > 1 ? 's' : '' }} en cave</span>
+  </p>
+
+  <form [formGroup]="formulaire" (ngSubmit)="onSubmit()">
+    <label for="date-degustation">Date</label>
+    <input id="date-degustation" type="date" formControlName="date" [max]="aujourdhui">
+
+    <label for="occasion">Occasion</label>
+    <input id="occasion" formControlName="occasion" placeholder="Anniversaire de Marie">
+
+    <span class="libelle">Note</span>
+    <div class="etoiles">
+      @for (etoile of [1, 2, 3, 4, 5]; track etoile) {
+        <button type="button" [class.active]="formulaire.value.note >= etoile"
+                [attr.aria-label]="etoile + ' sur 5'" (click)="setNote(etoile)">★</button>
+      }
+    </div>
+
+    <label for="commentaire-degustation">Commentaire</label>
+    <textarea id="commentaire-degustation" formControlName="commentaire" rows="3"
+              placeholder="Superbe avec le gigot, encore un peu jeune"></textarea>
+
+    @if (vin().quantite === 0) {
+      <p class="remarque">Il ne reste plus de bouteille en cave : la dégustation sera notée sans changer la quantité.</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="btn-principal" [disabled]="formulaire.invalid || enCours()">Ouvrir la bouteille</button>
+      <button type="button" class="btn-secondaire" (click)="fermer.emit()">Annuler</button>
+    </div>
+  </form>
+</div>
