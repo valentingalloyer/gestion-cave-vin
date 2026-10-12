@@ -12,7 +12,11 @@
   <div class="container">
     <div class="entete">
       <h1 class="titre-serif">La cave à Jack</h1>
-      <button type="button" class="btn-principal" [disabled]="!synchronise()" (click)="ajouterBouteille.emit()">+ Ajouter une bouteille</button>
+      <div class="actions">
+        <button type="button" class="btn-secondaire" [disabled]="vins().length === 0" (click)="exporter()"
+                title="Télécharger toute la cave dans un fichier Excel (CSV)">Exporter</button>
+        <button type="button" class="btn-principal" [disabled]="!synchronise()" (click)="ajouterBouteille.emit()">+ Ajouter une bouteille</button>
+      </div>
     </div>
 
     @if (!synchronise()) {

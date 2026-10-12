@@ -1,0 +1,31 @@
+<div class="fond" (click)="fermer.emit()"></div>
+<div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="titre-mot-de-passe">
+  <div class="entete">
+    <h2 id="titre-mot-de-passe" class="titre-serif">Changer mon mot de passe</h2>
+    <button type="button" class="btn-fermer" aria-label="Fermer" (click)="fermer.emit()">✕</button>
+  </div>
+
+  <form [formGroup]="formulaire" (ngSubmit)="onSubmit()">
+    <label for="ancien-mot-de-passe">Mot de passe actuel</label>
+    <input id="ancien-mot-de-passe" type="password" formControlName="ancien" autocomplete="current-password">
+
+    <label for="nouveau-mot-de-passe">Nouveau mot de passe</label>
+    <input id="nouveau-mot-de-passe" type="password" formControlName="nouveau" autocomplete="new-password">
+    <p class="aide">Au moins {{ longueurMin }} caractères.</p>
+
+    <label for="confirmation-mot-de-passe">Confirmer le nouveau mot de passe</label>
+    <input id="confirmation-mot-de-passe" type="password" formControlName="confirmation" autocomplete="new-password">
+    @if (formulaire.hasError('differents')) {
+      <p class="erreur">Les deux mots de passe ne sont pas identiques.</p>
+    }
+
+    @if (erreur()) {
+      <p class="erreur" role="alert">{{ erreur() }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="btn-principal" [disabled]="formulaire.invalid || enCours()">Enregistrer</button>
+      <button type="button" class="btn-secondaire" (click)="fermer.emit()">Annuler</button>
+    </div>
+  </form>
+</div>

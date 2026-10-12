@@ -75,6 +75,11 @@
   animation: toast-apparition 0.3s ease-out;
 }
 
+.toast.erreur {
+  background: var(--danger);
+  color: var(--surface);
+}
+
 @keyframes toast-apparition {
   from { opacity: 0; transform: translate(-50%, 20px); }
   to { opacity: 1; transform: translate(-50%, 0); }

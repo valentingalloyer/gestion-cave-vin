@@ -40,6 +40,10 @@ export class AuthService {
     this.username.set(null);
   }
 
+  changerMotDePasse(ancien: string, nouveau: string): Observable<void> {
+    return this.http.put<void>(environment.apiUrl + '/compte/mot-de-passe', {ancien, nouveau});
+  }
+
   login(credentials: Credentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(this.apiUrl + '/login', credentials).pipe(
       // Le serveur peut dormir : on réessaie seulement si on ne l'a pas joint (pas sur un mauvais mot de passe)

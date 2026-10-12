@@ -105,7 +105,7 @@
           Vous avez déjà <strong>{{ existant.quantite }} bouteille{{ existant.quantite > 1 ? 's' : '' }}</strong>
           de {{ existant.nom }} {{ existant.millesime }}@if (existant.emplacement) { ({{ existant.emplacement }})}.
         </p>
-        <button type="button" class="btn-principal" (click)="ajouterAuDoublon()">
+        <button type="button" class="btn-principal" [disabled]="enregistrement()" (click)="ajouterAuDoublon()">
           Ajouter {{ vinForm.value.quantite || 1 }} bouteille{{ (vinForm.value.quantite || 1) > 1 ? 's' : '' }} à cette référence
         </button>
       </div>
@@ -149,15 +149,15 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" [class]="doublon() ? 'btn-secondaire' : 'btn-principal'" [disabled]="vinForm.invalid">
+      <button type="submit" [class]="doublon() ? 'btn-secondaire' : 'btn-principal'" [disabled]="vinForm.invalid || enregistrement()">
         {{ vinEnEdition() ? "Enregistrer" : doublon() ? "Créer une référence séparée" : "Ajouter à la cave" }}
       </button>
       @if (!vinEnEdition() && !doublon()) {
-        <button type="button" class="btn-secondaire" [disabled]="vinForm.invalid" (click)="onSubmit(true)">Ajouter et continuer</button>
+        <button type="button" class="btn-secondaire" [disabled]="vinForm.invalid || enregistrement()" (click)="onSubmit(true)">Ajouter et continuer</button>
       }
       @if (vinEnEdition()) {
         <button type="button" class="btn-secondaire" (click)="ajouterMillesimeDepuisEdition()">Ajouter un millésime</button>
-        <button type="button" class="btn-secondaire btn-supprimer" (click)="supprimer()">Supprimer</button>
+        <button type="button" class="btn-secondaire btn-supprimer" [disabled]="enregistrement()" (click)="supprimer()">Supprimer</button>
       }
     </div>
   </form>

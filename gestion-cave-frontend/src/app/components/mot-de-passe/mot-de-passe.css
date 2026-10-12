@@ -1,0 +1,76 @@
+.fond {
+  position: fixed;
+  inset: 0;
+  z-index: 899;
+  background: var(--voile);
+}
+
+/* Petite fenêtre centrée */
+.fenetre {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: 900;
+  width: min(420px, calc(100% - 32px));
+  box-sizing: border-box;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--ombre);
+  padding: 20px 24px 24px;
+}
+
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.entete h2 {
+  font-size: 1.2rem;
+}
+
+.btn-fermer {
+  background: none;
+  border: none;
+  border-radius: var(--rayon);
+  color: var(--texte-2);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.btn-fermer:hover {
+  background: var(--surface-2);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.8rem;
+  color: var(--texte-2);
+  margin: 12px 0 6px;
+}
+
+label:first-child {
+  margin-top: 0;
+}
+
+.aide, .erreur {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--texte-2);
+}
+
+.erreur {
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}

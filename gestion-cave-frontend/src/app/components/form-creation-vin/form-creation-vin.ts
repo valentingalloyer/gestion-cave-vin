@@ -1,5 +1,6 @@
 import {Component, computed, effect, HostListener, input, output, Signal, signal, untracked} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {finalize, Observable} from 'rxjs';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { VinService } from '../../services/vin.service';
 import { Vin } from '../../models/vin.model';
@@ -50,6 +51,8 @@ export class VinFormComponent {
   // Émis après un ajout, une modification ou une suppression
   caveModifiee = output<void>();
   ouvert = signal(false);
+  // Une requête est en cours : les boutons sont désactivés (pas de double envoi)
+  enregistrement = signal(false);
   // Bouteille en cours de modification (null = mode ajout)
   vinEnEdition = signal<Vin | null>(null);
 
@@ -271,12 +274,12 @@ export class VinFormComponent {
     const vinEnEdition = this.vinEnEdition();
 
     if (vinEnEdition) {
-      this.vinService.updateVin({...this.vinForm.value, id: vinEnEdition.id}).subscribe((vinModifie) => {
+      this.enregistrer(this.vinService.updateVin({...this.vinForm.value, id: vinEnEdition.id}), (vinModifie) => {
         this.toastService.show(`✏️ ${vinModifie.nom} ${vinModifie.millesime} modifié`);
         this.terminer();
       });
     } else {
-      this.vinService.addVin(this.vinForm.value).subscribe((vinAjoute) => {
+      this.enregistrer(this.vinService.addVin(this.vinForm.value), (vinAjoute) => {
         this.toastService.show(`🍷 ${vinAjoute.nom} ${vinAjoute.millesime} ajouté à la cave`);
         if (continuer) {
           this.preparerBouteilleSuivante();
@@ -292,7 +295,7 @@ export class VinFormComponent {
     const ajout = Number(this.vinForm.value.quantite) || 1;
     if (!existant) return;
 
-    this.vinService.updateVin({...existant, quantite: existant.quantite + ajout}).subscribe((vinModifie) => {
+    this.enregistrer(this.vinService.updateVin({...existant, quantite: existant.quantite + ajout}), (vinModifie) => {
       this.toastService.show(`🍷 +${ajout} ${vinModifie.nom} ${vinModifie.millesime} (${vinModifie.quantite} en cave)`);
       this.terminer();
     });
@@ -303,7 +306,7 @@ export class VinFormComponent {
     if (!vin?.id) return;
 
     if (confirm(`Voulez-vous vraiment supprimer tous les "${vin.nom}" ${vin.millesime} de votre cave ?`)) {
-      this.vinService.deleteVin(vin.id).subscribe(() => {
+      this.enregistrer(this.vinService.deleteVin(vin.id), () => {
         this.toastService.show(`🗑️ "${vin.nom}" ${vin.millesime} a été retiré de la cave.`);
         this.terminer();
       });
@@ -320,6 +323,17 @@ export class VinFormComponent {
   setNote(valeur: number) {
     this.vinForm.patchValue({ note: valeur });
     this.vinForm.markAsDirty();
+  }
+
+  /**
+   * Envoie une requête au serveur. En cas d'échec, le message d'erreur est affiché par
+   * erreursInterceptor et le panneau reste ouvert avec la saisie, pour pouvoir réessayer.
+   */
+  private enregistrer<T>(requete: Observable<T>, succes: (reponse: T) => void) {
+    if (this.enregistrement()) return;
+    this.enregistrement.set(true);
+    requete.pipe(finalize(() => this.enregistrement.set(false)))
+      .subscribe({next: succes, error: () => {}});
   }
 
   private remplirApogee(proposee: ApogeeProposee | null) {

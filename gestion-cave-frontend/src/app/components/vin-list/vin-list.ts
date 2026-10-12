@@ -4,6 +4,7 @@ import { VinService } from '../../services/vin.service';
 import { CaveCacheService } from '../../services/cave-cache';
 import { Apogee, apogeeDe, estABoire } from '../../models/apogee';
 import { normaliser } from '../../models/texte';
+import { caveEnCsv, telecharger } from '../../models/export';
 import {CommonModule} from '@angular/common';
 
 export interface RegionDeVins {
@@ -156,10 +157,12 @@ export class VinListComponent implements OnInit {
 
     const vinModifie = { ...vin, quantite: nouvelleQuantite };
 
-    this.vinService.updateVin(vinModifie).subscribe(() => {
-      this.vins.update(listeActuelle =>
+    // En cas d'échec, la quantité affichée ne change pas et erreursInterceptor prévient l'utilisateur
+    this.vinService.updateVin(vinModifie).subscribe({
+      next: () => this.vins.update(listeActuelle =>
         listeActuelle.map(v => v.id === vin.id ? vinModifie : v)
-      );
+      ),
+      error: () => {}
     });
   }
 
@@ -189,6 +192,12 @@ export class VinListComponent implements OnInit {
 
   classeCouleur(vin: Vin): string {
     return (vin.couleur ?? '').toLowerCase().replace('é', 'e');
+  }
+
+  /** Toute la cave (sans tenir compte des filtres) dans un fichier pour Excel : sert aussi de sauvegarde */
+  exporter() {
+    const date = new Date().toISOString().slice(0, 10);
+    telecharger(caveEnCsv(this.vins()), `cave-${date}.csv`);
   }
 
   reinitialiserFiltres() {

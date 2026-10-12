@@ -24,6 +24,7 @@
   @if (authService.isLoggedIn()) {
     <div class="utilisateur">
       <span>{{ authService.username() }}</span>
+      <button type="button" class="btn-secondaire" (click)="motDePasseOuvert.set(true)">Mot de passe</button>
       <button type="button" class="btn-secondaire" (click)="authService.logout()">Se déconnecter</button>
     </div>
   }
@@ -33,11 +34,16 @@
   <app-vin-list #liste
                 (ajouterBouteille)="formulaire.ouvrirAjout()"
                 (modifierVin)="formulaire.modifier($event)"></app-vin-list>
+  @if (motDePasseOuvert()) {
+    <app-mot-de-passe (fermer)="motDePasseOuvert.set(false)"></app-mot-de-passe>
+  }
   <app-vin-form #formulaire [vins]="liste.vins()" (caveModifiee)="liste.chargerVins()"></app-vin-form>
 } @else {
   <app-login></app-login>
 }
 
 @if (toastService.message(); as message) {
-  <div class="toast" role="status" (click)="toastService.fermer()">{{ message }}</div>
+  <div class="toast" [class.erreur]="toastService.type() === 'erreur'"
+       [attr.role]="toastService.type() === 'erreur' ? 'alert' : 'status'"
+       (click)="toastService.fermer()">{{ message }}</div>
 }

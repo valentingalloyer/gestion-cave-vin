@@ -53,14 +53,14 @@ public class InitialisationProprietaire implements ApplicationRunner {
 
         if (existant.isPresent()) {
             proprietaire = existant.get();
-        } else if (password.length() >= 6) {
+        } else if (password.length() >= AuthService.LONGUEUR_MIN_MOT_DE_PASSE) {
             proprietaire = new User();
             proprietaire.setUsername(username);
             proprietaire.setPassword(passwordEncoder.encode(password));
             proprietaire = userRepository.save(proprietaire);
             log.info("Compte propriétaire '{}' créé", username);
         } else {
-            log.warn("Compte '{}' inexistant et PROPRIETAIRE_PASSWORD absent (ou < 6 caractères) : rien n'est créé", username);
+            log.warn("Compte '{}' inexistant et PROPRIETAIRE_PASSWORD absent (ou trop court) : rien n'est créé", username);
             return;
         }
 
