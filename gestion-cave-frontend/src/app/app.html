@@ -3,10 +3,11 @@
     <span>👤 {{ authService.username() }}</span>
     <button type="button" (click)="authService.logout()">Se déconnecter</button>
   </div>
-  <app-vin-form #formulaire (vinEnregistre)="liste.chargerVins()"></app-vin-form>
-  <hr>
-  <app-vin-list #liste (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"
-                (modifierVin)="formulaire.modifier($event)"></app-vin-list>
+  <app-vin-list #liste
+                (ajouterBouteille)="formulaire.ouvrirAjout()"
+                (modifierVin)="formulaire.modifier($event)"
+                (preparerNouveauMillesime)="formulaire.remplirDepuisExistant($event)"></app-vin-list>
+  <app-vin-form #formulaire (caveModifiee)="liste.chargerVins()"></app-vin-form>
 } @else {
   <app-login></app-login>
 }

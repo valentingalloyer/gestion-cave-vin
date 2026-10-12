@@ -37,14 +37,40 @@ h1, h3 {
   padding-bottom: 10px;
 }
 
-/* Bouton réduit à une icône (modifier, supprimer...) */
-.btn-icon {
-  background: none;
-  border: none;
-  color: #ccc;
+
+/* Boutons partagés par les composants */
+.btn-principal, .btn-secondaire {
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: 50px;
   cursor: pointer;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.btn-principal {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-principal:hover:not(:disabled) {
+  background: #4d0909;
+  transform: translateY(-2px);
+}
+
+.btn-principal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+.btn-secondaire {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-secondaire:hover {
+  background: var(--secondary);
 }

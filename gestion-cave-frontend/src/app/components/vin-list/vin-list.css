@@ -126,7 +126,7 @@
 .bottle-item {
   display: grid;
   /* 1:An | 2:Apogée | 3:Note | 4:Commentaire | 5:Loc | 6:Actions */
-  grid-template-columns: 55px 110px 100px 1fr 100px 190px;
+  grid-template-columns: 55px 110px 100px 1fr 100px 115px;
   align-items: center;
   gap: 12px;
   padding: 8px 15px;
@@ -134,6 +134,8 @@
   border-radius: 8px;
   margin-bottom: 4px;
   border-left: 5px solid transparent;
+  /* Toute la ligne ouvre le panneau de modification */
+  cursor: pointer;
 }
 
 /* Commentaire et emplacement : en italique, tronqués avec "…" */
@@ -234,13 +236,19 @@
   font-weight: 600;
 }
 
-.btn-trash:hover {
-  color: #e74c3c;
+.liste-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 2px solid var(--secondary);
 }
 
-.btn-edit:hover {
-  color: var(--primary);
+.liste-entete h1 {
+  border: none;
 }
+
 
 .chevron {
   display: inline-block;
@@ -251,7 +259,7 @@
   transform: rotate(90deg);
 }
 
-.chevron.rotated {
+.rotated {
   /* Quand c'est replié, elle pointe vers la droite */
   transform: rotate(0deg);
 }

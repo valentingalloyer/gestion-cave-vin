@@ -1,5 +1,10 @@
-<div class="form-container" [class]="currentCouleur" [class.highlight-active]="isHighlighted()">
-  <h3>{{ vinEnEdition() ? "Modifier la bouteille" : "Ajouter une nouvelle bouteille" }}</h3>
+@if (ouvert()) {
+<div class="panneau-fond" (click)="fermer()"></div>
+<div class="form-container" [class]="currentCouleur" role="dialog" aria-modal="true" aria-labelledby="titre-panneau">
+  <div class="panneau-entete">
+    <h3 id="titre-panneau">{{ vinEnEdition() ? "Modifier la bouteille" : "Ajouter une bouteille" }}</h3>
+    <button type="button" class="btn-fermer" aria-label="Fermer" (click)="fermer()">✕</button>
+  </div>
   <form [formGroup]="vinForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
 
@@ -108,12 +113,14 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" [disabled]="vinForm.invalid">
-        {{ vinEnEdition() ? "Enregistrer les modifications" : "Ajouter à la cave" }}
+      <button type="submit" class="btn-principal" [disabled]="vinForm.invalid">
+        {{ vinEnEdition() ? "Enregistrer" : "Ajouter à la cave" }}
       </button>
       @if (vinEnEdition()) {
-        <button type="button" class="btn-annuler" (click)="annulerModification()">Annuler</button>
+        <button type="button" class="btn-secondaire" (click)="ajouterMillesimeDepuisEdition()">Ajouter un millésime</button>
+        <button type="button" class="btn-secondaire btn-supprimer" (click)="supprimer()">Supprimer</button>
       }
     </div>
   </form>
 </div>
+}

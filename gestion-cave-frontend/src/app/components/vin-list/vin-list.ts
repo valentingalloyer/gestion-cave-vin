@@ -3,7 +3,6 @@ import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
 import {CommonModule} from '@angular/common';
 import { REGIONS_GROUPEES} from '../../models/groupeVin.model';
-import {ToastService} from '../../services/toast';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @Component({
@@ -24,6 +23,7 @@ export class VinListComponent implements OnInit {
 
   @Output() preparerNouveauMillesime = new EventEmitter<Vin>();
   @Output() modifierVin = new EventEmitter<Vin>();
+  @Output() ajouterBouteille = new EventEmitter<void>();
 
   searchQuery = signal('');
   openedGroups = signal<Set<string>>(new Set());
@@ -96,8 +96,7 @@ export class VinListComponent implements OnInit {
 
   collapsedRegions = signal<Set<string>>(new Set());
 
-  constructor(private vinService: VinService,
-              protected toastService: ToastService) {}
+  constructor(private vinService: VinService) {}
 
   ngOnInit(): void {
     this.chargerVins();
@@ -111,7 +110,9 @@ export class VinListComponent implements OnInit {
   }
 
   chargerVins() {
-    this.isLoading.set(true);
+    // Le loader plein écran n'apparaît qu'au premier chargement :
+    // après un enregistrement, la liste se met à jour sans perdre la position dans la page
+    if (this.vins().length === 0) this.isLoading.set(true);
 
     // Si au bout de 3 secondes on n'a toujours rien, on active le message spécial
     const timer = setTimeout(() => {
@@ -150,26 +151,6 @@ export class VinListComponent implements OnInit {
         listeActuelle.map(v => v.id === vin.id ? vinModifie : v)
       );
     });
-  }
-
-  supprimerVin(id: number, nom: string, annee: number) {
-    if (confirm(`Voulez-vous vraiment supprimer tous les "${nom}" ${annee} de votre cave ?`)) {
-      this.vinService.deleteVin(id).subscribe(() => {
-        this.toastService.show(`🗑️ "${nom}" ${annee} a été retiré de la cave.`);
-
-        this.chargerVins();
-      });
-    }
-  }
-
-  onAjouterMillesime(vin: Vin) {
-    this.preparerNouveauMillesime.emit(vin);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  onModifier(vin: Vin) {
-    this.modifierVin.emit(vin);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   getCountForRegion(nameMap: Map<string, Map<string, Vin[]>>): number {
