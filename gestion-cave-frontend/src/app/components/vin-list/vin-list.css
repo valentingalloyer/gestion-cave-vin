@@ -47,7 +47,7 @@
 /* Chiffres clés */
 .chiffres {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 12px;
 }
@@ -69,9 +69,58 @@
   font-weight: 500;
 }
 
+.chiffres .pret { color: var(--pret-texte); }
+.chiffres .vite { color: var(--vite-texte); }
+
 .recherche {
   position: relative;
+  margin-bottom: 10px;
+}
+
+/* Filtres en pastilles cliquables */
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 16px;
+}
+
+.filtre {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--bordure-forte);
+  background: transparent;
+  color: var(--texte-2);
+  cursor: pointer;
+}
+
+.filtre.actif {
+  background: var(--texte);
+  border-color: var(--texte);
+  color: var(--fond);
+}
+
+.separateur {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: var(--bordure-forte);
+}
+
+.effacer {
+  font: inherit;
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .recherche svg {
@@ -135,7 +184,7 @@
 /* Une bouteille = une ligne */
 .ligne {
   display: grid;
-  grid-template-columns: 10px 48px minmax(0, 1.3fr) minmax(0, 1fr) 96px 76px auto;
+  grid-template-columns: 10px 48px minmax(0, 1.3fr) minmax(0, 1fr) 116px 76px auto;
   align-items: center;
   gap: 12px;
   padding: 9px 14px;
@@ -164,11 +213,6 @@
 }
 
 .details {
-  font-size: 0.85rem;
-  color: var(--texte-2);
-}
-
-.apogee {
   font-size: 0.85rem;
   color: var(--texte-2);
 }
@@ -227,7 +271,7 @@
 /* Écran étroit : plus de place pour le commentaire */
 @media (max-width: 900px) {
   .ligne {
-    grid-template-columns: 10px 44px minmax(0, 1fr) 90px 72px auto;
+    grid-template-columns: 10px 44px minmax(0, 1fr) 110px 72px auto;
   }
 
   .commentaire {
@@ -239,6 +283,10 @@
 @media (max-width: 600px) {
   .ligne {
     grid-template-columns: 10px 40px minmax(0, 1fr) auto;
+  }
+
+  .chiffres {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
 

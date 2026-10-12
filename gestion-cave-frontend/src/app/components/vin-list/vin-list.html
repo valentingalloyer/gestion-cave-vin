@@ -34,12 +34,31 @@
     <div class="chiffres">
       <div><span>Bouteilles</span><strong>{{ nombreTotalBouteilles() }}</strong></div>
       <div><span>Références</span><strong>{{ nombreTotalReferences() }}</strong></div>
+      <div><span>À boire maintenant</span><strong class="pret">{{ nombreABoire() }}</strong></div>
+      <div><span>À boire vite</span><strong class="vite">{{ nombreABoireVite() }}</strong></div>
     </div>
 
     <div class="recherche">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input type="search" placeholder="Margaux, 2015, Casier A1…" aria-label="Rechercher un vin"
              [value]="searchQuery()" (input)="onSearch($event)">
+    </div>
+
+    <div class="filtres" role="group" aria-label="Filtres">
+      @for (couleur of couleurs; track couleur) {
+        <button type="button" class="filtre" [class.actif]="filtreCouleur() === couleur"
+                [attr.aria-pressed]="filtreCouleur() === couleur" (click)="basculerCouleur(couleur)">
+          <span class="pastille" [class]="couleur.toLowerCase().replace('é', 'e')"></span> {{ couleur }}
+        </button>
+      }
+      <span class="separateur" aria-hidden="true"></span>
+      <button type="button" class="filtre" [class.actif]="filtreABoire()" [attr.aria-pressed]="filtreABoire()"
+              (click)="filtreABoire.set(!filtreABoire())">À boire maintenant</button>
+      <button type="button" class="filtre" [class.actif]="masquerBues()" [attr.aria-pressed]="masquerBues()"
+              (click)="masquerBues.set(!masquerBues())">Masquer les bues</button>
+      @if (filtresActifs()) {
+        <button type="button" class="effacer" (click)="reinitialiserFiltres()">Tout effacer</button>
+      }
     </div>
 
     @for (region of regions(); track region.nom) {
@@ -64,8 +83,8 @@
               </span>
               <span class="commentaire" [title]="v.notePersonnelle ?? ''">{{ v.notePersonnelle }}</span>
               <span class="apogee">
-                @if (v.apogeeDebut && v.apogeeFin) {
-                  {{ v.apogeeDebut }}–{{ v.apogeeFin }}
+                @if (apogee(v); as a) {
+                  <span class="badge" [class]="a.statut" [title]="a.detail">{{ a.libelle }}</span>
                 }
               </span>
               <span class="note" [attr.aria-label]="(v.note ?? 0) + ' sur 5'">
@@ -87,9 +106,9 @@
 
     @if (filteredAndSortedVins().length === 0) {
       <div class="aucun-resultat">
-        @if (searchQuery()) {
-          <p>Aucune bouteille ne correspond à « {{ searchQuery() }} ».</p>
-          <button type="button" class="btn-secondaire" (click)="resetSearch()">Voir toute la cave</button>
+        @if (filtresActifs()) {
+          <p>Aucune bouteille ne correspond à la recherche et aux filtres.</p>
+          <button type="button" class="btn-secondaire" (click)="reinitialiserFiltres()">Voir toute la cave</button>
         } @else {
           <p>La cave est vide pour l'instant.</p>
           <button type="button" class="btn-principal" [disabled]="!synchronise()" (click)="ajouterBouteille.emit()">Ajouter une première bouteille</button>

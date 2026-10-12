@@ -2,6 +2,7 @@ import {Component, computed, effect, EventEmitter, OnInit, Output, signal} from 
 import { Vin } from '../../models/vin.model';
 import { VinService } from '../../services/vin.service';
 import { CaveCacheService } from '../../services/cave-cache';
+import { Apogee, apogeeDe, estABoire } from '../../models/apogee';
 import {CommonModule} from '@angular/common';
 
 export interface RegionDeVins {
@@ -31,11 +32,24 @@ export class VinListComponent implements OnInit {
   @Output() ajouterBouteille = new EventEmitter<void>();
 
   searchQuery = signal('');
+  // Filtres : couleur ('' = toutes), bouteilles prêtes à boire, bouteilles bues masquées
+  filtreCouleur = signal('');
+  filtreABoire = signal(false);
+  masquerBues = signal(false);
+  readonly couleurs = ['Rouge', 'Blanc', 'Rosé'];
+
+  filtresActifs = computed(() =>
+    !!this.searchQuery() || !!this.filtreCouleur() || this.filtreABoire() || this.masquerBues());
   collapsedRegions = signal<Set<string>>(new Set());
 
   filteredAndSortedVins = computed(() => {
     const query = this.normaliser(this.searchQuery());
+    const couleur = this.filtreCouleur();
     let items = this.vins();
+
+    if (couleur) items = items.filter(v => v.couleur === couleur);
+    if (this.filtreABoire()) items = items.filter(v => estABoire(v));
+    if (this.masquerBues()) items = items.filter(v => v.quantite > 0);
 
     if (query) {
       items = items.filter(v => {
@@ -77,6 +91,9 @@ export class VinListComponent implements OnInit {
   });
 
   nombreTotalReferences = computed(() => this.filteredAndSortedVins().length);
+
+  nombreABoire = computed(() => this.compterBouteilles(v => estABoire(v)));
+  nombreABoireVite = computed(() => this.compterBouteilles(v => apogeeDe(v)?.statut === 'vite'));
 
   constructor(private vinService: VinService,
               private caveCache: CaveCacheService) {
@@ -161,12 +178,27 @@ export class VinListComponent implements OnInit {
     return this.collapsedRegions().has(regionName);
   }
 
+  apogee(vin: Vin): Apogee | null {
+    return apogeeDe(vin);
+  }
+
+  basculerCouleur(couleur: string) {
+    this.filtreCouleur.update(actuelle => actuelle === couleur ? '' : couleur);
+  }
+
   classeCouleur(vin: Vin): string {
     return (vin.couleur ?? '').toLowerCase().replace('é', 'e');
   }
 
-  resetSearch() {
+  reinitialiserFiltres() {
     this.searchQuery.set('');
+    this.filtreCouleur.set('');
+    this.filtreABoire.set(false);
+    this.masquerBues.set(false);
+  }
+
+  private compterBouteilles(condition: (vin: Vin) => boolean): number {
+    return this.filteredAndSortedVins().filter(condition).reduce((total, vin) => total + vin.quantite, 0);
   }
 
   private normaliser(str: string): string {

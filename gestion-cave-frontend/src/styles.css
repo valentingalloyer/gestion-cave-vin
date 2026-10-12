@@ -23,6 +23,15 @@
   --vin-rouge: #a32d2d;
   --vin-blanc: #e3a52b;
   --vin-rose: #d4537e;
+  /* Badges d'apogée : fond pâle, texte foncé de la même teinte */
+  --jeune-fond: #e6f1fb;
+  --jeune-texte: #0c447c;
+  --pret-fond: #eaf3de;
+  --pret-texte: #27500a;
+  --vite-fond: #faeeda;
+  --vite-texte: #7a4508;
+  --passe-fond: #fcebeb;
+  --passe-texte: #791f1f;
   --ombre: 0 12px 40px rgba(0, 0, 0, 0.14);
   --voile: rgba(0, 0, 0, 0.35);
   --rayon: 10px;
@@ -48,6 +57,14 @@
     --vin-rouge: #e05a5a;
     --vin-blanc: #f0b54a;
     --vin-rose: #ee7fa5;
+    --jeune-fond: #12304d;
+    --jeune-texte: #b5d4f4;
+    --pret-fond: #1f3512;
+    --pret-texte: #c0dd97;
+    --vite-fond: #42300f;
+    --vite-texte: #fac775;
+    --passe-fond: #451818;
+    --passe-texte: #f7c1c1;
     --ombre: 0 12px 40px rgba(0, 0, 0, 0.5);
     --voile: rgba(0, 0, 0, 0.6);
   }
@@ -73,6 +90,14 @@
   --vin-rouge: #e05a5a;
   --vin-blanc: #f0b54a;
   --vin-rose: #ee7fa5;
+  --jeune-fond: #12304d;
+  --jeune-texte: #b5d4f4;
+  --pret-fond: #1f3512;
+  --pret-texte: #c0dd97;
+  --vite-fond: #42300f;
+  --vite-texte: #fac775;
+  --passe-fond: #451818;
+  --passe-texte: #f7c1c1;
   --ombre: 0 12px 40px rgba(0, 0, 0, 0.5);
   --voile: rgba(0, 0, 0, 0.6);
 }
@@ -184,3 +209,19 @@ button:disabled {
 .pastille.rouge { background: var(--vin-rouge); }
 .pastille.blanc { background: var(--vin-blanc); }
 .pastille.rose { background: var(--vin-rose); }
+
+/* Badge d'apogée (voir models/apogee.ts) */
+.badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.badge.jeune { background: var(--jeune-fond); color: var(--jeune-texte); }
+.badge.pret { background: var(--pret-fond); color: var(--pret-texte); }
+.badge.vite { background: var(--vite-fond); color: var(--vite-texte); }
+.badge.passe { background: var(--passe-fond); color: var(--passe-texte); }
