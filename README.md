@@ -24,3 +24,22 @@ Le serveur peut mettre jusqu'à 90 secondes à se réveiller
 2. Installer les dépendances : `npm install`
 3. Lancer avec `ng serve`
 4. Ouvrir `http://localhost:4200`
+
+## ✅ Tests
+
+À lancer avant chaque mise en ligne.
+
+### Backend
+Dans `gestion-cave` : `mvn test` (base H2 en mémoire, aucune variable d'environnement nécessaire).
+
+Sans Java installé, via Docker (depuis la racine du projet) :
+```
+docker run --rm -v "$PWD/gestion-cave:/app" -w /app maven:3.9.6-eclipse-temurin-21 mvn -q test
+```
+
+Couvre l'authentification, l'isolation entre comptes, les bouteilles, le journal de dégustation, le changement de mot de passe et la création du compte propriétaire.
+
+### Frontend
+Dans `gestion-cave-frontend` : `npm test -- --watch=false`
+
+Couvre les règles d'apogée, l'export CSV, la recherche, les filtres et les quantités de la liste, et le panneau d'ajout (suggestions, doublons, apogée proposée).

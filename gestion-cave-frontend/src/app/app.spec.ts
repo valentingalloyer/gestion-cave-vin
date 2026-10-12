@@ -1,23 +1,31 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
+  afterEach(() => localStorage.clear());
 
-  it('should render title', async () => {
+  it("affiche l'écran de connexion quand on n'est pas connecté", async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, gestion-cave-frontend');
+    const page = fixture.nativeElement as HTMLElement;
+    expect(page.querySelector('app-login')).toBeTruthy();
+    expect(page.querySelector('h1')?.textContent).toContain('La cave à Jack');
+  });
+
+  it('propose les trois thèmes', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const boutons = (fixture.nativeElement as HTMLElement).querySelectorAll('.theme-choix button');
+    expect(boutons).toHaveLength(3);
   });
 });
